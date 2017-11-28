@@ -8,17 +8,19 @@ import com.example.administrator.framework.AppManager;
 import com.example.administrator.framework.IState;
 import com.example.administrator.framework.R;
 
+import java.util.Vector;
+
 /**
  * Created by Administrator on 2017-11-28.
  */
 
 public class GameState implements IState {
 
-    private Mob mob;
+    Vector<Mob> mv = new Vector<Mob>();
+    long Last = System.currentTimeMillis();
 
     @Override
     public void Init() {
-        mob = new Mob(AppManager.getInstance().getBitmap(R.drawable.mob_sprite));
     }
 
     @Override
@@ -29,12 +31,25 @@ public class GameState implements IState {
     @Override
     public void Update() {
         long GameTime = System.currentTimeMillis();
-        mob.Update(GameTime);
+        for(Mob mob : mv) {
+            mob.Update(GameTime);
+        }
+        MakeMob();
+    }
+
+    public void MakeMob() {
+        if(System.currentTimeMillis() - Last >= 1000) {
+            Last = System.currentTimeMillis();
+            Mob mob = new Mob();
+            mv.add(mob);
+        }
     }
 
     @Override
     public void Render(Canvas canvas) {
-        mob.Draw(canvas);
+        for(Mob mob : mv) {
+            mob.Draw(canvas);
+        }
     }
 
     @Override

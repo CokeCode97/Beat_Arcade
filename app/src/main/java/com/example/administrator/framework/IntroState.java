@@ -12,14 +12,10 @@ import java.util.Random;
  */
 
 public class IntroState implements IState {
-    Bitmap icon;
-    int x;
-    int y;
-    Random r = new Random();
 
     @Override
     public void Init() {
-        icon = AppManager.getInstance().getBitmap(R.drawable.mob);
+
     }
 
     @Override
@@ -34,7 +30,6 @@ public class IntroState implements IState {
 
     @Override
     public void Render(Canvas canvas) {
-        canvas.drawBitmap(icon,x,y,null);
     }
 
     @Override

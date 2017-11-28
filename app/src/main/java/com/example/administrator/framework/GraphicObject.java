@@ -18,7 +18,7 @@ public class GraphicObject {
         y = 0;
     }
 
-    public void SetPosition(int x, int y) {
+    public void setPosition(int x, int y) {
         this.x = x;
         this.y = y;
     }
