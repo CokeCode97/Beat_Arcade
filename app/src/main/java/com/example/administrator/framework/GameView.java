@@ -18,7 +18,6 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback{
     //게임뷰 스레드& IState 저장
     public GameViewThread gameview_thread;
     private IState istate;
-    private SpriteAnimation spriteAnimation;
 
     //게임뷰의 생성자
     public GameView(Context context) {
