@@ -19,8 +19,8 @@ public class GraphicObject {
     }
 
     public void setPosition(int x, int y) {
-        this.x = x;
-        this.y = y;
+        this.x = (int)(x * GameActivity.size);
+        this.y = (int)(y * GameActivity.size);
     }
 
     public void Draw(Canvas canvas) {
@@ -29,10 +29,14 @@ public class GraphicObject {
     }
 
     public int getX(){
-        return x;
+        return (int)(x/GameActivity.size);
     }
 
     public int getY(){
-        return y;
+        return (int)(y/GameActivity.size);
     }
+
+    public int getX_R() {return x;}
+
+    public int getY_R() {return y;}
 }
