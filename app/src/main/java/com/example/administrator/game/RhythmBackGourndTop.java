@@ -10,6 +10,7 @@ import com.example.administrator.framework.SpriteAnimation;
  * Created by Administrator on 2017-11-29.
  */
 
+//노트가 내려오는 부분의 배경을 나타내는 객체
 public class RhythmBackGourndTop extends SpriteAnimation {
     public RhythmBackGourndTop() {
         super((AppManager.getInstance().getBitmap(R.drawable.background_top)));

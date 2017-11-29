@@ -8,6 +8,7 @@ import com.example.administrator.framework.SpriteAnimation;
  * Created by Administrator on 2017-11-29.
  */
 
+//1번 버튼을 그려주는 객체
 public class RhythmBackGroundBottom1 extends SpriteAnimation {
     public RhythmBackGroundBottom1 () {
         super((AppManager.getInstance().getBitmap(R.drawable.background_bottom_1)));
