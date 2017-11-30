@@ -17,6 +17,7 @@ public class RhythmJudge extends SpriteAnimation {
     float note_speed = 0.01f;
 
     //생성될때 GameState와 Bitmap데이터를 가져와 상황에 맞는 이미지 출력
+    //bitamp = 출력될 비트맵 데이터
     public RhythmJudge(Bitmap bitmap, GameState gs) {
         //애니메이션 정보설정
         super(bitmap);
@@ -28,6 +29,7 @@ public class RhythmJudge extends SpriteAnimation {
     }
 
     //Move
+    //x, y 이것이 움직일 좌표들
     public void Move(float x, float y) {
         this.note_x += x;
         this.note_y += y;

@@ -3,17 +3,13 @@ package com.example.administrator.game;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Rect;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 
 import com.example.administrator.framework.AppManager;
-import com.example.administrator.framework.GameActivity;
 import com.example.administrator.framework.IState;
 import com.example.administrator.framework.R;
 
-import java.util.ConcurrentModificationException;
-import java.util.Iterator;
 import java.util.Random;
 import java.util.Vector;
 
@@ -27,6 +23,7 @@ public class GameState implements IState {
     //리듬 게임에서 여러개가 나오는 객체들을 벡터로 관리
     Vector<RhythmNote> nv = new Vector<RhythmNote>();
     Vector<RhythmJudge> jv = new Vector<RhythmJudge>();
+    Vector<RhythmComboNumber> cnv = new Vector<>();
 
     //게임 배경을 그려주는 객체들
     RhythmBackGourndTop rbgt = new RhythmBackGourndTop();
@@ -34,8 +31,13 @@ public class GameState implements IState {
     RhythmBackGroundBottom2 rbgb2 = new RhythmBackGroundBottom2();
     RhythmBackGroundBottom3 rbgb3 = new RhythmBackGroundBottom3();
 
+    RhythmCombo rcb = new RhythmCombo();
+
     //시간을 측정할 기준 Last
     long Last = System.currentTimeMillis();
+
+    //콤보
+    int combo = 0;
 
     @Override
     public void Init() {
@@ -81,6 +83,14 @@ public class GameState implements IState {
             jv.get(i).Draw(canvas);
         }
 
+        //콤보가 2보다 크면 콤보와 관련된 오브젝트들을 렌더링함
+        if(combo > 2) {
+            rcb.Draw(canvas);
+            for(int i = 0; i < cnv.size(); i++) {
+                cnv.get(i).Draw(canvas);
+            }
+        }
+
         //버튼들을 그려줌
         rbgb1.Draw(canvas);
         rbgb2.Draw(canvas);
@@ -102,9 +112,11 @@ public class GameState implements IState {
 
 
     //판정을 생성함
+    //judge_num = 판정점수
     public void makeJudge(int judge_num) {
         RhythmJudge judge;
 
+        combo++;
         //판정 숫자에 따라 각기 다른 비트맵을 넣어 판정을 생성하고 jv에 넣어줌
         if(judge_num == 4) {
             judge = new RhythmJudge(AppManager.getInstance().getBitmap(R.drawable.perfect), this);
@@ -120,24 +132,32 @@ public class GameState implements IState {
         }
         else {
             judge = new RhythmJudge(AppManager.getInstance().getBitmap(R.drawable.miss), this);
+            //미스가 발생할 경우 콤보를  0으로 바꾸고 cnv속 객체를 전부 지움
+            combo = 0;
+            cnv.clear();
         }
         jv.add(judge);
     }
 
+
     //선택된 노트를 제거함
+    //note = 제거할 노트객체
     public void removeNote(RhythmNote note) {
         nv.remove(note);
     }
 
+
     //선택된 판정출력을 제거함
-    public void removeJudge(RhythmJudge jedge) {
-        jv.remove(jedge);
+    //judge = 제거할 판정표시객체
+    public void removeJudge(RhythmJudge judge) {
+        jv.remove(judge);
     }
 
 
     //노트를 판정하는 메소드
+    //note_num = 판정할 노트의 nv인덱스넘버
     public void noteJudge(int note_num) {
-        int judge_point = 0;
+        int judge_point = 0; //판정을 담당할 숫자
 
         //시작시 판정변수가 0으로 시작하며 범위를 줄여주면서 해당범위에 들어있다면 1을 더해줌
         if(nv.get(note_num).getY() < 930 && nv.get(note_num).getY() > 690) {
@@ -152,10 +172,41 @@ public class GameState implements IState {
                 }
             }
 
-            //최종적으로 합산된 판정값을 가지고 판정출력객체를 생성 이후 노트를 삭제
+            //최종적으로 합산된 판정값을 가지고 판정출력객체를 생성
             makeJudge(judge_point);
+            //콤보매니저 호출
+            comboManager();
+
+            //이후 노트를 삭제
             nv.remove(note_num);
             return;
+        }
+    }
+
+    //콤보를 관리하는 메소드
+    public void comboManager() {
+        int num = 0;        //콤보의 자릿수
+        int check = 1;      //콤보의 자릿수를 구하기위해 사용될 체크
+        int n = 10;         //콤보 특정자릿수의 숫자를 명확하게 알아내기 위한 변수
+
+        //콤보가 몇자리수인지 체크하는 메소드
+        while(combo / check > 0) {
+            num++;
+            check = check*10;
+        }
+
+        //자리수보다 cnv속의 객체수가 적을경우 새로운 콤보넘버객체를 생성하여 그 수를 맞춰줌
+        if(cnv.size() < num) {
+            cnv.add(new RhythmComboNumber());
+        }
+
+        //combo글자의 위치를 알맞게 조절함
+        rcb.setcombo(num);
+
+        //cnv에 있는 콤보넘버 객체들을 각각에 알맞는 숫자와 위치에 배치되도록 해줌
+        for(int i = 0; i < num; i++) {
+            cnv.get(i).setcombo(rcb.getX(), ((combo % n)/(n/10)), num-i-1);
+            n*=10;
         }
     }
 
@@ -169,10 +220,11 @@ public class GameState implements IState {
     @Override
     public boolean onTouchEvent(MotionEvent event) {
 
-        int action = event.getAction();
-        int x, y;
-        int note_i = 0;
+        int action = event.getAction(); //터치액션을 담음
+        int x, y;                       //좌표를 담기위한 변수
+        int note_i = 0;                 //노트의 인덱스
 
+        //터치받은 액션으로 부터 좌표를 받아옴
         x = (int)event.getX();
         y = (int)event.getY();
 

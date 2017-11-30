@@ -68,4 +68,9 @@ public class SpriteAnimation extends GraphicObject {
     public int getSpriteHeight() {
         return (int)(spriteHeight*GameActivity.size);
     }
+
+    public void setRect(int left, int width) {
+        this.rect.left = left;
+        this.rect.right = left + width;
+    }
 }
