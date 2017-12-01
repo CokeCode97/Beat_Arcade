@@ -301,7 +301,7 @@ public class GameState implements IState {
             }
         }
 
-
+        //리듬게임쪽을 터치했다면 리듬노트 검사
         if(t1_x != 0 && t1_y != 0 && nv.size()>0) {
             //1번버튼이 눌려졌다면 nv벡터에서 노트넘버가 0인것을 찾아 그 인덱스를 note_i에 저장
             if (rt1.contains(t1_x, t1_y) && nv.size() > 0) {
@@ -328,7 +328,6 @@ public class GameState implements IState {
 
 
         //D-Pad에 터치좌표가 있을경우
-
         if(rt.contains(t2_x, t2_y)) {
             //D-Pad의 버튼을 누른곳으로 움직여줌
             dpad_MiniCircle.setPosition((int)((t2_x-75) / GameActivity.size), (int) ((t2_y-75) / GameActivity.size));
@@ -342,7 +341,6 @@ public class GameState implements IState {
             t2_y = 0;
             dpad_MiniCircle.setPosition(dpad_MiniCircle.x_ori, dpad_MiniCircle.y_ori);
         }
-
 
         //몹에 무빙을 위한 판정요소들을 넣어줌
         m.setDis(dx, dy);
