@@ -13,7 +13,7 @@ import com.example.administrator.framework.SpriteAnimation;
 public class Circle extends Graphic {
     public Circle() {
         super((AppManager.getInstance().getBitmap(R.drawable.circle)));
-        this.InitSpriteData(400, 400);
+        this.InitSpriteData(400, 400, 1);
         setPosition(1520, 680);
     }
 }

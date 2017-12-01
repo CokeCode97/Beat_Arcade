@@ -12,6 +12,7 @@ public class GameViewThread extends Thread {
     //접근을 위한 멤버 변수
     private SurfaceHolder surfaceHolder;
     private GameView gameView;
+    private boolean check = false;
 
     //스레드실행 상태
     private boolean run_ch = false;
@@ -22,7 +23,6 @@ public class GameViewThread extends Thread {
     }
 
     public void setRunnig(boolean run) {
-
         run_ch = run;
     }
 
@@ -44,12 +44,6 @@ public class GameViewThread extends Thread {
                     surfaceHolder.unlockCanvasAndPost(canvas);
                 }
             }
-
-            /*try {
-                sleep(5);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }*/
         }
     }
 }

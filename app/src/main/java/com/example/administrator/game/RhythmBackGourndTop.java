@@ -15,6 +15,6 @@ import com.example.administrator.framework.SpriteAnimation;
 public class RhythmBackGourndTop extends Graphic {
     public RhythmBackGourndTop() {
         super((AppManager.getInstance().getBitmap(R.drawable.background_top)));
-        this.InitSpriteData(830, 500);
+        this.InitSpriteData(208, 125, 4);
     }
 }

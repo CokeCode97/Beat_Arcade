@@ -11,7 +11,7 @@ import com.example.administrator.framework.R;
 public class ShootingBackground extends Graphic {
     public ShootingBackground  () {
         super((AppManager.getInstance().getBitmap(R.drawable.shootingback)));
-        this.InitSpriteData(1080, 1420);
+        this.InitSpriteData(270, 355, 4);
         setPosition(500, 0);
     }
 }

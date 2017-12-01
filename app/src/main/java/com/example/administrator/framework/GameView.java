@@ -43,7 +43,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
     @Override
     public void onDraw(Canvas canvas) {
         //화면을 검게 칠함
-        canvas.drawColor(Color.BLACK);
+        //canvas.drawColor(Color.BLACK);
         //istate 랜더를 불러들여 istate
         istate.Render(canvas);
     }

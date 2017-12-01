@@ -13,7 +13,7 @@ import com.example.administrator.framework.SpriteAnimation;
 public class RhythmBackGroundBottom2 extends Graphic {
     public RhythmBackGroundBottom2 () {
         super((AppManager.getInstance().getBitmap(R.drawable.background_bottom_2)));
-        this.InitSpriteData(250, 159);
+        this.InitSpriteData(250, 159, 1);
         setPosition(167, 830);
     }
 }
