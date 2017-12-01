@@ -12,7 +12,7 @@ import com.example.administrator.framework.SpriteAnimation;
 public class RhythmNote extends SpriteAnimation {
     GameState gs;
     int note_x = 16, note_y = 0, noteNum;
-    float note_speed = 20f;
+    float note_speed = 25f;
 
 
     //생성시 노트넘버롸 GameState를 받아옴
@@ -21,6 +21,7 @@ public class RhythmNote extends SpriteAnimation {
         //애니메이션 정보설정
         super((AppManager.getInstance().getBitmap(R.drawable.note)));
         this.InitSpriteData(22, 150, 1, 1);
+
         //위치 세팅
         this.noteNum = noteNum;
         setNote();

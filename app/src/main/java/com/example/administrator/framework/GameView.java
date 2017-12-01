@@ -3,10 +3,12 @@ package com.example.administrator.framework;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
+import android.view.View;
 
 import com.example.administrator.game.GameState;
 
@@ -14,7 +16,7 @@ import com.example.administrator.game.GameState;
  * Created by Administrator on 2017-11-27.
  */
 
-public class GameView extends SurfaceView implements SurfaceHolder.Callback{
+public class GameView extends SurfaceView implements SurfaceHolder.Callback {
     //게임뷰 스레드& IState 저장
     public GameViewThread gameview_thread;
     private IState istate;
@@ -108,7 +110,9 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback{
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
+        super.onTouchEvent(event);
         istate.onTouchEvent(event);
-        return super.onTouchEvent(event);
+        invalidate();
+        return true;
     }
 }

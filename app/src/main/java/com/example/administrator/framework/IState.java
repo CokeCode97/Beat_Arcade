@@ -3,6 +3,7 @@ package com.example.administrator.framework;
 import android.graphics.Canvas;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
+import android.view.View;
 
 /**
  * Created by Administrator on 2017-11-27.
