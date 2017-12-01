@@ -44,6 +44,12 @@ public class GameViewThread extends Thread {
                     surfaceHolder.unlockCanvasAndPost(canvas);
                 }
             }
+
+            /*try {
+                sleep(5);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }*/
         }
     }
 }
