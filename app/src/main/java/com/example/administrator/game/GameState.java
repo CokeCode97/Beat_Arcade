@@ -33,6 +33,7 @@ public class GameState implements IState {
     RhythmBackGroundBottom1 rbgb1 = new RhythmBackGroundBottom1();
     RhythmBackGroundBottom2 rbgb2 = new RhythmBackGroundBottom2();
     RhythmBackGroundBottom3 rbgb3 = new RhythmBackGroundBottom3();
+    ShootingBackground shootingBackground = new ShootingBackground();
 
     //Dpad를 구성하는 원들
     Circle dpad_Circle = new Circle();
@@ -51,7 +52,6 @@ public class GameState implements IState {
     int t2_x = 0, t2_y = 0;     //D-Pad좌표
     double angle;               //각도
     double dx, dy;              //D-Pad의 중심과 사용자가 누른곳 사이의 거리
-
 
 
     @Override
@@ -90,6 +90,8 @@ public class GameState implements IState {
     public void Render(Canvas canvas) {
         //노트가 내려오는 부분의 배경을 그려줌
         rbgt.Draw(canvas);
+        shootingBackground.Draw(canvas);
+
 
         //nv벡터 안에 있는 모든 객체를 그려줌
         for (int i = 0; i < nv.size(); i++) {
