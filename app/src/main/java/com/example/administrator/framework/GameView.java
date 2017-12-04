@@ -20,6 +20,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
     //게임뷰 스레드& IState 저장
     public GameViewThread gameview_thread;
     private IState istate;
+    private GameState gs;
 
     //게임뷰의 생성자
     public GameView(Context context) {
@@ -36,7 +37,9 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         getHolder().addCallback(this);
         //게임뷰 스레드에 홀더와 게임뷰를 넘겨줌
         gameview_thread = new GameViewThread(getHolder(), this);
-        changeGameState(new GameState());
+        gs = new GameState();
+        changeGameState(gs);
+        gs.start();
     }
 
     //화면을 그려주는 온드로우() 메소드
@@ -45,6 +48,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         //화면을 검게 칠함
         //canvas.drawColor(Color.BLACK);
         //istate 랜더를 불러들여 istate
+        gs.setCheck(true);
         istate.Render(canvas);
     }
 
@@ -52,7 +56,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
     //화면의 업데이트를 적용해줄 업데이트 함수
     public void Update() {
         //istate의 업데이트를 지속적으로 호출하여 istate를 상속받은 모든 클래스들이 update함수를 활용할수 있게 해줌
-        istate.Update();
+        //istate.Update();
     }
 
 

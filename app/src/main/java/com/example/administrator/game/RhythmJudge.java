@@ -13,8 +13,8 @@ import com.example.administrator.framework.SpriteAnimation;
 //리듬판정을 그리는객체
 public class RhythmJudge extends SpriteAnimation {
     GameState gs;
-    int note_x = 113, note_y = 200, noteNum;
-    float note_speed = 0.01f;
+    int note_x = 113, note_y = 200;
+    float note_speed = 0.03f;
 
     //생성될때 GameState와 Bitmap데이터를 가져와 상황에 맞는 이미지 출력
     //bitamp = 출력될 비트맵 데이터
@@ -42,7 +42,7 @@ public class RhythmJudge extends SpriteAnimation {
 
         //170위로 올라가면 파괴
         Move(0, -note_speed);
-        if(note_y < 170) {
+        if(note_y < 175) {
             gs.removeJudge(this);
         }
     }

@@ -11,20 +11,20 @@ import com.example.administrator.framework.SpriteAnimation;
  * Created by Administrator on 2017-12-01.
  */
 
-public class Mob extends ShootingObject {
-    int mob_x = 1500, mob_y = 500, t2_x, t2_y, dpadCircle_x, dpadCircle_y;  //각종변수
+public class Player extends ShootingObject {
+    int player_x = 1500, player_y = 500;            //플레이어의 시작좌표
+    int t2_x, t2_y, dpadCircle_x, dpadCircle_y;  //각종변수
     static int width = 98, height = 85;
-    static float speed = 10f;
+    static float speed = 12f;
     double angle, dx, dy;
-    GameState gs;
 
-     public Mob(GameState gs) {
+     public Player() {
          //애니메이션 정보설정
         super((AppManager.getInstance().getBitmap(R.drawable.mob_sprite)), speed, width, height);
         this.InitSpriteData(height, width, 8, 4);
-        this.gs = gs;
+
         //몹 위치 세팅
-        this.setPosition(mob_x, mob_y);
+        this.setPosition(player_x, player_y);
      }
 
 
@@ -36,6 +36,7 @@ public class Mob extends ShootingObject {
             Move(angle);
         }
      }
+
 
      //각도를 세팅
      public void setAngle(double angle) {
@@ -50,6 +51,7 @@ public class Mob extends ShootingObject {
         this.t2_y = t2_y;
      }
 
+
      //d-pad큰 원의 좌표를 가져옴
      //dapadCircle_x = x좌표, dapadCircle_y = y축 좌표
      public void setdpadCircle(int dpadCircle_x, int dpadCircle_y) {
@@ -57,18 +59,11 @@ public class Mob extends ShootingObject {
         this.dpadCircle_y = dpadCircle_y;
      }
 
+
      //터치와 D-pad사이의 거리를 받아옴
     //dx = x축거리, dy = y축거리
      public void setDis(double dx, double dy) {
          this.dx = dx;
          this.dy = dy;
      }
-
-     public void makeLaser() {
-         gs.lv.add(new Laser(this, System.currentTimeMillis()));
-     }
-
-    public void deleteLaser(Laser l) {
-        gs.lv.remove(l);
-    }
 }

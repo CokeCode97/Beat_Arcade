@@ -2,6 +2,7 @@ package com.example.administrator.framework;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Point;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
@@ -16,6 +17,8 @@ import android.widget.Toast;
 public class GameActivity extends Activity {
     GameView gameView;
     public static double size;
+
+    public static final int gamePort = 4168;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {

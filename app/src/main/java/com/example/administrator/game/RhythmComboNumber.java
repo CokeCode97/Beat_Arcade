@@ -1,5 +1,7 @@
 package com.example.administrator.game;
 
+import android.graphics.Bitmap;
+
 import com.example.administrator.framework.AppManager;
 import com.example.administrator.framework.R;
 import com.example.administrator.framework.SpriteAnimation;
@@ -9,8 +11,8 @@ import com.example.administrator.framework.SpriteAnimation;
  */
 
 public class RhythmComboNumber extends SpriteAnimation {
-    public RhythmComboNumber () {
-        super((AppManager.getInstance().getBitmap(R.drawable.number_sprite)));
+    public RhythmComboNumber (Bitmap bitmap) {
+        super(bitmap);
         this.InitSpriteData(80, 67, 1, 1);
         setPosition(132, 300);
     }

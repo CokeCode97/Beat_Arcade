@@ -1,5 +1,7 @@
 package com.example.administrator.game;
 
+import android.graphics.Bitmap;
+
 import com.example.administrator.framework.AppManager;
 import com.example.administrator.framework.R;
 import com.example.administrator.framework.SpriteAnimation;
@@ -12,14 +14,14 @@ import com.example.administrator.framework.SpriteAnimation;
 public class RhythmNote extends SpriteAnimation {
     GameState gs;
     int note_x = 16, note_y = 0, noteNum;
-    float note_speed = 25f;
+    float note_speed = 30f;
 
 
     //생성시 노트넘버롸 GameState를 받아옴
     //noteNum = 노트라인번호
-    public RhythmNote(int noteNum, GameState gs) {
+    public RhythmNote(Bitmap bitmap, int noteNum, GameState gs) {
         //애니메이션 정보설정
-        super((AppManager.getInstance().getBitmap(R.drawable.note)));
+        super(bitmap);
         this.InitSpriteData(22, 150, 1, 1);
 
         //위치 세팅
@@ -51,6 +53,36 @@ public class RhythmNote extends SpriteAnimation {
     public void Update(long GameTime) {
         super.Update(GameTime);
         Move(0 , note_speed);
+    }
+
+    //노트를 판정하는 메소드
+    //note_num = 판정할 노트의 nv인덱스넘버
+    public void noteJudge(int note_num, int note_line) {
+        int judge_point = 0; //판정을 담당할 숫자
+        if(note_line == this.getNoteNum()) {
+            //시작시 판정변수가 0으로 시작하며 범위를 줄여주면서 해당범위에 들어있다면 1을 더해줌
+            if (this.getY() < 930 && this.getY() > 690) {
+                judge_point++;
+                if (this.getY() < 910 && this.getY() > 710) {
+                    judge_point++;
+                    if (this.getY() < 890 && this.getY() > 730) {
+                        judge_point++;
+                        if (this.getY() < 870 && this.getY() > 750) {
+                            judge_point++;
+                        }
+                    }
+                }
+
+                //최종적으로 합산된 판정값을 가지고 판정출력객체를 생성
+                gs.makeJudge(judge_point);
+                //콤보매니저 호출
+                gs.rhythmCombo.comboManager();
+
+                //이후 노트를 삭제
+                gs.note_Vector.remove(note_num);
+                return;
+            }
+        }
     }
 
     //노트넘버를 반환
