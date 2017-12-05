@@ -9,6 +9,9 @@ import android.view.Display;
 import android.view.WindowManager;
 import android.widget.Toast;
 
+import com.example.administrator.networks.ClientWork;
+import com.example.administrator.networks.ServerWork;
+
 /**
  * Created by Administrator on 2017-11-27.
  */
@@ -16,6 +19,21 @@ import android.widget.Toast;
 public class GameActivity extends Activity {
     GameView gameView;
     public static double size;
+
+
+    /* TODO 네트워크
+    static final int gamePort = 1451;
+
+    private String myName;
+    private String myIP;
+    private String opponentName;
+    private String opponentIP;
+    private String isHost;
+
+    private ServerWork serverWork;
+    private ClientWork clientWork;
+    */
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -29,6 +47,31 @@ public class GameActivity extends Activity {
         gameView = new GameView(this);
         setContentView(gameView);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+
+
+
+        /* TODO 네트워크
+        myName = getIntent().getStringExtra("myName");
+        myIP = getIntent().getStringExtra("myIP");
+        opponentName = getIntent().getStringExtra("opponentName");
+        opponentIP = getIntent().getStringExtra("opponentIP");
+        isHost = getIntent().getStringExtra("isHost");
+
+        if (isHost.equals("yes")) {
+            serverWork = new ServerWork(myName, myIP, opponentName, opponentIP, gamePort);
+            clientWork = new ClientWork(myIP, gamePort);
+        } else {
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            clientWork = new ClientWork(opponentIP, gamePort);
+        }
+        */
+
+
+
     }
 
     @Override
