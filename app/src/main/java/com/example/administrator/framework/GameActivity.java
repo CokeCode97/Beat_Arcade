@@ -18,11 +18,42 @@ public class GameActivity extends Activity {
     GameView gameView;
     public static double size;
 
-    public static final int gamePort = 4168;
+    /* TODO 네트워크
+    public static final int gamePort = 1451;
+
+    private String myName;
+    private String myIP;
+    private String opponentName;
+    private String opponentIP;
+    private String isHost;
+
+    private ServerWork serverWork;
+    private ClientWork clientWork;
+    */
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        /* TODO 네트워크
+        myName = getIntent().getStringExtra("myName");
+        myIP = getIntent().getStringExtra("myIP");
+        opponentName = getIntent().getStringExtra("opponentName");
+        opponentIP = getIntent().getStringExtra("opponentIP");
+        isHost = getIntent().getStringExtra("isHost");
+
+        if (isHost.equals("yes")) {
+            serverWork = new ServerWork(myName, myIP, opponentName, opponentIP, gamePort);
+            clientWork = new ClientWork(myIP, gamePort);
+        } else {
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            clientWork = new ClientWork(opponentIP, gamePort);
+        }
+        */
 
         //디스플레이의 해상도를 구함
         DisplayMetrics dm = getApplicationContext().getResources().getDisplayMetrics();

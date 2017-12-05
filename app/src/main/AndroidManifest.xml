@@ -13,18 +13,18 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".MainActivity"></activity>
-        <activity
-            android:name=".GameActivity"
-            android:label="title_activity_client"
-            android:screenOrientation="landscape"></activity>
-        <activity android:name="com.example.administrator.activites.IntroActivity">
+        <activity android:name="com.example.administrator.activities.IntroActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".GameActivity"
+            android:label="title_activity_client"
+            android:screenOrientation="landscape"></activity>
+
     </application>
 
 </manifest>

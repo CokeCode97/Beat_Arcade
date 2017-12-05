@@ -65,10 +65,10 @@ public class Mob extends ShootingObject {
      }
 
      public void makeLaser() {
-         gs.lv.add(new Laser(this, System.currentTimeMillis()));
+         //gs.lv.add(new Laser(this, System.currentTimeMillis()));
      }
 
     public void deleteLaser(Laser l) {
-        gs.lv.remove(l);
+        //gs.lv.remove(l);
     }
 }

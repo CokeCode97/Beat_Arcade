@@ -2,8 +2,9 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/FrameWork.iml" filepath="$PROJECT_DIR$/FrameWork.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Beat_Arcade.iml" filepath="$PROJECT_DIR$/Beat_Arcade.iml" />
       <module fileurl="file://C:\Users\yylwd\Desktop\JavaProject-master\JavaProject-master\FrameWork.iml" filepath="C:\Users\yylwd\Desktop\JavaProject-master\JavaProject-master\FrameWork.iml" />
+      <module fileurl="file://D:\[2017] VisualProgramming\FinalWorks\FinalApps\Beat_Arcade\FrameWork.iml" filepath="D:\[2017] VisualProgramming\FinalWorks\FinalApps\Beat_Arcade\FrameWork.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
     </modules>
   </component>
