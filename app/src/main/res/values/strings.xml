@@ -1,5 +1,5 @@
 <resources>
     <string name="app_name">Beat</string>
-    <string name="VersionCode">6</string>
-    <string name="VersionName">0.4.0</string>
+    <string name="VersionCode">7</string>
+    <string name="VersionName">0.5.0</string>
 </resources>

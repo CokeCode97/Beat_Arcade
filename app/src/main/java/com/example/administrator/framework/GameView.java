@@ -2,13 +2,10 @@ package com.example.administrator.framework;
 
 import android.content.Context;
 import android.graphics.Canvas;
-import android.graphics.Color;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
-import android.view.View;
 
 import com.example.administrator.game.GameState;
 
@@ -37,7 +34,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         getHolder().addCallback(this);
         //게임뷰 스레드에 홀더와 게임뷰를 넘겨줌
         gameview_thread = new GameViewThread(getHolder(), this);
-        gs = new GameState();
+        gs = new GameState(context);
         changeGameState(gs);
         gs.start();
     }

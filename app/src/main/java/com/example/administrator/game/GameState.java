@@ -1,12 +1,11 @@
 package com.example.administrator.game;
 
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Rect;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
-import android.view.View;
 
 import com.example.administrator.framework.AppManager;
 import com.example.administrator.framework.GameActivity;
@@ -23,6 +22,8 @@ import java.util.Vector;
 
 public class GameState extends Thread implements IState {
     Random random = new Random();
+    GameActivity gameActivity;
+    ClientWork clientWork;
 
 
     //게임에서 여러개가 나오는 객체들을 벡터로 관리
@@ -30,7 +31,7 @@ public class GameState extends Thread implements IState {
     Vector<RhythmJudge> judge_Vector = new Vector<>();
     Vector<RhythmComboNumber> comboNumber_Vector = new Vector<>();
 
-    Vector<Player> player_Vector = new Vector<>();
+    public Vector<Player> player_Vector = new Vector<>();
 
     //게임 배경을 그려주는 객체들
     RhythmBackGourndTop rhythmBackGourndTop = new RhythmBackGourndTop();
@@ -63,14 +64,17 @@ public class GameState extends Thread implements IState {
     double angle;               //각도
     double dx, dy;              //D-Pad의 중심과 사용자가 누른곳 사이의 거리
 
-    int player_Num = 0;
+    int player_Num = -1;
+    public int getPlayer_Num() {return player_Num;}
     boolean check = true;
+
 
     @Override
     public void run() {
         while(true) {
             if(check) {
                 this.Update();
+                clientWork.write("PlayerData " + player_Vector.get(player_Num).getX() + " " + player_Vector.get(player_Num).getY());
                 check = false;
             }
         }
@@ -78,6 +82,17 @@ public class GameState extends Thread implements IState {
 
     public void setCheck(boolean check) {
         this.check = check;
+    }
+
+    public GameState(Context context) {
+        gameActivity = (GameActivity) context;
+        clientWork = gameActivity.getClient();
+        clientWork.setGameState(this);
+        player_Num = gameActivity.getMyPlayerNum();
+        player_Vector.add(new Player());
+        player_Vector.add(new Player());
+
+        clientWork.start();
     }
 
 
@@ -93,8 +108,7 @@ public class GameState extends Thread implements IState {
         combo_bitmap = AppManager.getInstance().getBitmap(R.drawable.combo);
         comboNumber_bitmap = AppManager.getInstance().getBitmap(R.drawable.number_sprite);
 
-       rhythmCombo = new RhythmCombo(combo_bitmap, this);
-        player_Vector.add(new Player());
+        rhythmCombo = new RhythmCombo(combo_bitmap, this);
     }
 
     @Override
@@ -117,10 +131,8 @@ public class GameState extends Thread implements IState {
             judge_Vector.get(i).Update(GameTime);
         }
 
-        //jv벡터 안에 있는 모든 객체의 Update를 호출
-        for (int i = 0; i < player_Vector.size(); i++) {
-            player_Vector.get(i).Update(GameTime);
-        }
+        player_Vector.get(player_Num).Update(GameTime);
+
 
         MakeNote();
     }

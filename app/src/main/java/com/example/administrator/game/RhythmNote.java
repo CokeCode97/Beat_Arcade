@@ -2,8 +2,6 @@ package com.example.administrator.game;
 
 import android.graphics.Bitmap;
 
-import com.example.administrator.framework.AppManager;
-import com.example.administrator.framework.R;
 import com.example.administrator.framework.SpriteAnimation;
 
 /**
@@ -77,6 +75,8 @@ public class RhythmNote extends SpriteAnimation {
                 gs.makeJudge(judge_point);
                 //콤보매니저 호출
                 gs.rhythmCombo.comboManager();
+
+                gs.clientWork.write("attack");
 
                 //이후 노트를 삭제
                 gs.note_Vector.remove(note_num);

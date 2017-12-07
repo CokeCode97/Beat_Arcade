@@ -1,12 +1,15 @@
 package com.example.administrator.networks;
 
-import android.util.Log;
+import com.example.administrator.game.GameState;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.Socket;
+import java.util.StringTokenizer;
+import java.util.Vector;
 
 /**
  * Created by yylwd on 2017-12-03.
@@ -21,9 +24,17 @@ public class ClientWork extends Thread {
     private BufferedWriter writer;
 
     private String readData = "";
-
     public String getReadData() {
         return readData;
+    }
+
+    private Vector<Player> player_Vector = new Vector<>();
+
+    private GameState gameState;
+
+    class Player {
+        int x;
+        int y;
     }
 
     public ClientWork(String serverIP, int gamePort) {
@@ -34,18 +45,28 @@ public class ClientWork extends Thread {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        this.start();
+        player_Vector.add(new Player());
+        player_Vector.add(new Player());
+        //this.start();
+        //TODO GameState생성자에서 시작
     }
 
     @Override
     public void run() {
         try {
+            // TODO 클라작업
             while (flag) {
-                readData = reader.readLine();
-                Log.d("Client", readData);
+                try {
+                    readData = reader.readLine();
+                    check_Message(readData);
+
+                } catch (NullPointerException e) {
+                    e.printStackTrace();
+                }
+
             }
             socket.close();
-        } catch (Exception e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
@@ -58,4 +79,33 @@ public class ClientWork extends Thread {
             e.printStackTrace();
         }
     }
+
+
+    public void check_Message(String string) {
+        StringTokenizer stringTokenizer = new StringTokenizer(string, " ");
+
+        while(stringTokenizer.hasMoreTokens()) {
+            String tag = stringTokenizer.nextToken();
+
+            switch(tag) {
+                case "PlayerData" : {
+                    int player_Num = Integer.parseInt(stringTokenizer.nextToken());
+                    player_Vector.get(player_Num).x = Integer.parseInt(stringTokenizer.nextToken());
+                    player_Vector.get(player_Num).y = Integer.parseInt(stringTokenizer.nextToken());
+                    if(gameState.getPlayer_Num() != player_Num)
+                        gameState.player_Vector.get(player_Num).setPosition(player_Vector.get(player_Num).x, player_Vector.get(player_Num).y);
+                }
+                case "attack" : {
+
+                }
+            }
+        }
+    }
+
+    public void setGameState(GameState gs) {
+        this.gameState = gs;
+
+    }
 }
+
+//PlayerData 0 100 120 PlayerData 1 1003 120 Bullet 0 20 400 Bullet 1 30 432
