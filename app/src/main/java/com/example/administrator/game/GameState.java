@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Rect;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 
@@ -73,10 +74,18 @@ public class GameState extends Thread implements IState {
 
     @Override
     public void run() {
+        int i = 0;
         while(true) {
             if(check) {
                 this.Update();
-                clientWork.write("PlayerData " + player_Vector.get(player_Num).getX() + " " + player_Vector.get(player_Num).getY());
+                //clientWork.write("PlayerData " + player_Vector.get(player_Num).getX() + " " + player_Vector.get(player_Num).getY());
+                clientWork.write("PlayerData " + player_Vector.get(player_Num).getMove_Check() + " " + player_Vector.get(player_Num).getAngle());
+                if(i > 200) {
+                    clientWork.write("PlayerDataXY " + player_Vector.get(player_Num).getX() + " " + player_Vector.get(player_Num).getY());
+
+                    i = 0;
+                }
+                i++;
                 check = false;
             }
         }
@@ -134,8 +143,13 @@ public class GameState extends Thread implements IState {
             judge_Vector.get(i).Update(GameTime);
         }
 
-        player_Vector.get(player_Num).Update(GameTime);
-
+        //플레이어와 레이저를 업데이트함
+        for (int i = 0; i < player_Vector.size(); i++) {
+            player_Vector.get(i).Update(GameTime);
+            for(int j = 0; j < player_Vector.get(i).laser_Vector.size(); j++) {
+                player_Vector.get(i).laser_Vector.get(j).Update(GameTime);
+            }
+        }
 
         MakeNote();
     }
@@ -172,8 +186,13 @@ public class GameState extends Thread implements IState {
         rhythmBackGroundBottom2.Draw(canvas);
         rhythmBackGroundBottom3.Draw(canvas);
 
+
+        //플레이어와 레이저를 그림
         for (int i = 0; i < player_Vector.size(); i++) {
             player_Vector.get(i).Draw(canvas);
+            for(int j = 0; j < player_Vector.get(i).laser_Vector.size(); j++) {
+                player_Vector.get(i).laser_Vector.get(j).Draw(canvas);
+            }
         }
 
 
@@ -323,6 +342,8 @@ public class GameState extends Thread implements IState {
             dpad_MiniCircle.setPosition((int)((t2_x-75) / GameActivity.size), (int) ((t2_y-75) / GameActivity.size));
             //각도계산기를 호출
             calcAngle();
+            //상태를 무브로 바꿈
+            player_Vector.get(player_Num).setMove_Check(true);
         }
 
         //손을 땔때 dpad의 값들을 초기화 시켜줌
@@ -330,6 +351,7 @@ public class GameState extends Thread implements IState {
             t2_x = 0;
             t2_y = 0;
             dpad_MiniCircle.setPosition(dpad_MiniCircle.x_ori, dpad_MiniCircle.y_ori);
+            player_Vector.get(player_Num).setMove_Check(false);
         }
 
         //몹에 무빙을 위한 판정요소들을 넣어줌
@@ -350,6 +372,8 @@ public class GameState extends Thread implements IState {
         player_Vector.get(player_Num).setAngle(angle);
     }
 
+
+    // TODO 클라이언트에서 수신한 메세지를 분석하고 그에맞는 일을 처리함
     public void check_Message(String string) {
         StringTokenizer stringTokenizer = new StringTokenizer(string, " ");
 
@@ -360,16 +384,33 @@ public class GameState extends Thread implements IState {
                 //플레이어의 위치정보를 받아와 그에 맞게 위치를 조정
                 case "PlayerData" : {
                     int player_Num = Integer.parseInt(stringTokenizer.nextToken());
+
+                    if(this.getPlayer_Num() != player_Num) {
+                        player_Vector.get(player_Num).setMove_Check(Boolean.parseBoolean(stringTokenizer.nextToken()));
+                        player_Vector.get(player_Num).setAngle(Double.parseDouble(stringTokenizer.nextToken()));
+                    } else {
+                        stringTokenizer.nextToken();
+                        stringTokenizer.nextToken();
+                    }
+
+                    break;
+                }
+
+                //서버에서 받아온 값으로 캐릭터의 좌표를 동기화 시킴
+                case "PlayerDataXY" : {
                     player_Vector.get(player_Num).x = Integer.parseInt(stringTokenizer.nextToken());
                     player_Vector.get(player_Num).y = Integer.parseInt(stringTokenizer.nextToken());
-                    if(this.getPlayer_Num() != player_Num)
-                        this.player_Vector.get(player_Num).setPosition(player_Vector.get(player_Num).x, player_Vector.get(player_Num).y);
+                    this.player_Vector.get(player_Num).setPosition(player_Vector.get(player_Num).x, player_Vector.get(player_Num).y);
+
+                    break;
                 }
 
                 //공격정보를 수신하여 그에 맞게 공격명령
                 case "Attack" : {
                     int player_Num = Integer.parseInt(stringTokenizer.nextToken());
                     player_Vector.get(player_Num).make_Laser(laser_Bitmap, System.currentTimeMillis());
+
+                    break;
                 }
             }
         }

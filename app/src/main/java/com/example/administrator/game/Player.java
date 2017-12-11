@@ -14,13 +14,19 @@ import java.util.Vector;
  */
 
 public class Player extends ShootingObject {
-    static int width = 98, height = 85;
-    static float speed = 12f;
+    static int width = 98, height = 85; //플레이어의 크기
+    static float speed = 12f;           //플레이어의 속도
 
-    int player_x = 1500, player_y = 500;            //플레이어의 시작좌표
-    int t2_x, t2_y, dpadCircle_x, dpadCircle_y;  //각종변수
+    //터치좌표, 디패드의 중심좌표
+    int t2_x, t2_y, dpadCircle_x, dpadCircle_y;
+
+    //각도, 중심과 터치좌표의 거리
     double angle, dx, dy;
 
+    //무브체크
+    boolean move_Check = false;
+
+    //레이저를 담는 벡터
     Vector<Laser> laser_Vector = new Vector<>();
 
     public Player() {
@@ -28,7 +34,7 @@ public class Player extends ShootingObject {
         super((AppManager.getInstance().getBitmap(R.drawable.mob_sprite)), speed, width, height);
         this.InitSpriteData(height, width, 8, 4);
         //몹 위치 세팅
-        this.setPosition(player_x, player_y);
+        this.setPosition(710, 540);
      }
 
 
@@ -36,7 +42,7 @@ public class Player extends ShootingObject {
      public void Update(long GameTime) {
         super.Update(GameTime);
          //dpad로 조작중이면 무브가 동작
-        if((t2_x > dpadCircle_x-100 && t2_y > dpadCircle_y - 100) && (Math.sqrt(dx*dx + dy*dy)) > 50) {
+        if(move_Check) {
             Move(angle);
         }
      }
@@ -46,6 +52,15 @@ public class Player extends ShootingObject {
      public void setAngle(double angle) {
          this.angle = angle;
      }
+
+     //각도를 리턴
+     public double getAngle() { return angle; }
+
+     //무브를 세팅
+     public void setMove_Check(boolean move_Check) { this.move_Check = move_Check; }
+
+     //무브를 리턴
+     public boolean getMove_Check() { return move_Check; }
 
 
      //터치좌표를 받아옴

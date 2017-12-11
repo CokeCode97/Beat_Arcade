@@ -34,6 +34,8 @@ public class ServerWork extends Thread {
     class Player {
         int x;
         int y;
+        double angle;
+        boolean move_Check;
     }
 
 
@@ -76,13 +78,9 @@ public class ServerWork extends Thread {
 
             // TODO 서버작업
             while (flag) {
+                String sendData = "PlayerData " + 0 + " " + player_Vector.get(0).move_Check + " " + player_Vector.get(0).angle +" " + "PlayerData " + 1 + " " + player_Vector.get(1).move_Check + " " + player_Vector.get(1).angle;
 
-                String sendData = "PlayerData " + 0 + " " + player_Vector.get(0).x + " " + player_Vector.get(0).y
-                        + " " + "PlayerData " + 1 + " " + player_Vector.get(1).x + " " + player_Vector.get(1).y;
-
-                serverMap.get(myName).write(sendData + "\n");
-                serverMap.get(opponentName).write(sendData + "\n");
-
+                all_Write(sendData);
 
                 this.sleep(15);
             }
@@ -90,12 +88,16 @@ public class ServerWork extends Thread {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
 
-
+    //연결된 클라이언트 전체에 메세지를 발송
+    public void all_Write(String sendData) {
+        serverMap.get(myName).write(sendData + "\n");
+        serverMap.get(opponentName).write(sendData + "\n");
     }
 
 
-
+    //각각의 클라이언트와 통신을 하는 쓰레드
     final class ServerThread extends Thread {
         private boolean flag = true;
 
@@ -126,6 +128,8 @@ public class ServerWork extends Thread {
             this.start();
         }
 
+
+        //쓰레드가 지속적으로 돌면서 데이터를 받아 readData에 저장함
         @Override
         public void run() {
             try {
@@ -139,6 +143,8 @@ public class ServerWork extends Thread {
             }
         }
 
+        //연결되어 있는 클라이언트로 메세지를 보냄
+        //writeData = 보낼 메세지
         public void write(String writeData) {
             try {
                 writer.write(writeData);
@@ -148,18 +154,34 @@ public class ServerWork extends Thread {
             }
         }
 
-        // TODO
+        // TODO 서버로 오는 메세지를 가져와 분석하고 그에 맞는 일을 처리함
         public void check_Message(String string) {
             StringTokenizer stringTokenizer = new StringTokenizer(string, " ");
             String tag = stringTokenizer.nextToken();
             switch (tag) {
+                //클라이언트로 부터 지속적으로 받아오는 캐릭터의 무브체크와 무브각도
                 case "PlayerData" : {
-                    player_Vector.get(player_Num).x = Integer.parseInt(stringTokenizer.nextToken());
-                    player_Vector.get(player_Num).y = Integer.parseInt(stringTokenizer.nextToken());
+                    /*player_Vector.get(player_Num).x = Integer.parseInt(stringTokenizer.nextToken());
+                    player_Vector.get(player_Num).y = Integer.parseInt(stringTokenizer.nextToken());*/
+                    player_Vector.get(player_Num).move_Check = Boolean.parseBoolean(stringTokenizer.nextToken());
+                    player_Vector.get(player_Num).angle = Double.parseDouble(stringTokenizer.nextToken());
                     break;
                 }
+
+                //클라이언트에서 주기적으로 받아오는 캐릭터의 좌표 이것을 통해 캐릭터의 좌표를 일정주기마다 동기화 시킴
+                case "PlayerDataXY" : {
+                    player_Vector.get(player_Num).x = Integer.parseInt(stringTokenizer.nextToken());
+                    player_Vector.get(player_Num).y = Integer.parseInt(stringTokenizer.nextToken());
+
+                    String sendData = "PlayerDataXY " + player_Num + " " + player_Vector.get(0).x + " " + player_Vector.get(0).y;
+
+                    all_Write(sendData);
+                    break;
+                }
+
+                //노트를 맞출때 호출되며 공격명령을 전달
                 case "Attack" : {
-                    write("Attack " + player_Num);
+                    all_Write("Attack " + player_Num);
                     break;
                 }
             }

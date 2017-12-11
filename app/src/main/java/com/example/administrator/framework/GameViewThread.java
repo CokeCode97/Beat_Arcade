@@ -13,7 +13,7 @@ public class GameViewThread extends Thread {
     private SurfaceHolder surfaceHolder;
     private GameView gameView;
 
-    public static  final  long MILLIS_PER_FRAME = 20;
+    public static  final  long MILLIS_PER_FRAME = 25;
 
     //스레드실행 상태
     private boolean run_ch = false;
