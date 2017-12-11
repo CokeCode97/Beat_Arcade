@@ -152,12 +152,16 @@ public class ServerWork extends Thread {
         public void check_Message(String string) {
             StringTokenizer stringTokenizer = new StringTokenizer(string, " ");
             String tag = stringTokenizer.nextToken();
-            if(tag.equals("PlayerData")) {
-                player_Vector.get(player_Num).x = Integer.parseInt(stringTokenizer.nextToken());
-                player_Vector.get(player_Num).y = Integer.parseInt(stringTokenizer.nextToken());
-                Log.d("c" ,player_Vector.get(player_Num).toString());
-            }
-            if(tag.equals("attack")) {
+            switch (tag) {
+                case "PlayerData" : {
+                    player_Vector.get(player_Num).x = Integer.parseInt(stringTokenizer.nextToken());
+                    player_Vector.get(player_Num).y = Integer.parseInt(stringTokenizer.nextToken());
+                    break;
+                }
+                case "Attack" : {
+                    write("Attack " + player_Num);
+                    break;
+                }
             }
         }
     }

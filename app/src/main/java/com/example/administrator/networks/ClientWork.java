@@ -58,7 +58,7 @@ public class ClientWork extends Thread {
             while (flag) {
                 try {
                     readData = reader.readLine();
-                    check_Message(readData);
+                    gameState.check_Message(readData);
 
                 } catch (NullPointerException e) {
                     e.printStackTrace();
@@ -77,28 +77,6 @@ public class ClientWork extends Thread {
             writer.flush();
         } catch (Exception e) {
             e.printStackTrace();
-        }
-    }
-
-
-    public void check_Message(String string) {
-        StringTokenizer stringTokenizer = new StringTokenizer(string, " ");
-
-        while(stringTokenizer.hasMoreTokens()) {
-            String tag = stringTokenizer.nextToken();
-
-            switch(tag) {
-                case "PlayerData" : {
-                    int player_Num = Integer.parseInt(stringTokenizer.nextToken());
-                    player_Vector.get(player_Num).x = Integer.parseInt(stringTokenizer.nextToken());
-                    player_Vector.get(player_Num).y = Integer.parseInt(stringTokenizer.nextToken());
-                    if(gameState.getPlayer_Num() != player_Num)
-                        gameState.player_Vector.get(player_Num).setPosition(player_Vector.get(player_Num).x, player_Vector.get(player_Num).y);
-                }
-                case "attack" : {
-
-                }
-            }
         }
     }
 

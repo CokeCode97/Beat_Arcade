@@ -14,6 +14,7 @@ import com.example.administrator.framework.R;
 import com.example.administrator.networks.ClientWork;
 
 import java.util.Random;
+import java.util.StringTokenizer;
 import java.util.Vector;
 
 /**
@@ -48,14 +49,15 @@ public class GameState extends Thread implements IState {
     RhythmCombo rhythmCombo;
 
     //비트맵 데이터
-    Bitmap perfect_bitmap;
-    Bitmap good_bitmap;
-    Bitmap bad_bitmap;
-    Bitmap poor_bitmap;
-    Bitmap miss_bitmap;
-    Bitmap note_bitmap;
-    Bitmap combo_bitmap;
-    Bitmap comboNumber_bitmap;
+    Bitmap perfect_Bitmap;
+    Bitmap good_Bitmap;
+    Bitmap bad_Bitmap;
+    Bitmap poor_Bitmap;
+    Bitmap miss_Bitmap;
+    Bitmap note_Bitmap;
+    Bitmap combo_Bitmap;
+    Bitmap comboNumber_Bitmap;
+    Bitmap laser_Bitmap;
 
 
     long Last = System.currentTimeMillis(); //시간을 측정할 기준 Last
@@ -99,16 +101,17 @@ public class GameState extends Thread implements IState {
     //시작될때 여러 비트맵 데이터나 객체들을 메모리에 올림
     @Override
     public void Init() {
-        perfect_bitmap = AppManager.getInstance().getBitmap(R.drawable.perfect);
-        good_bitmap = AppManager.getInstance().getBitmap(R.drawable.good);
-        bad_bitmap = AppManager.getInstance().getBitmap(R.drawable.bad);
-        poor_bitmap = AppManager.getInstance().getBitmap(R.drawable.poor);
-        miss_bitmap = AppManager.getInstance().getBitmap(R.drawable.miss);
-        note_bitmap = AppManager.getInstance().getBitmap(R.drawable.note);
-        combo_bitmap = AppManager.getInstance().getBitmap(R.drawable.combo);
-        comboNumber_bitmap = AppManager.getInstance().getBitmap(R.drawable.number_sprite);
+        perfect_Bitmap = AppManager.getInstance().getBitmap(R.drawable.perfect);
+        good_Bitmap = AppManager.getInstance().getBitmap(R.drawable.good);
+        bad_Bitmap = AppManager.getInstance().getBitmap(R.drawable.bad);
+        poor_Bitmap = AppManager.getInstance().getBitmap(R.drawable.poor);
+        miss_Bitmap = AppManager.getInstance().getBitmap(R.drawable.miss);
+        note_Bitmap = AppManager.getInstance().getBitmap(R.drawable.note);
+        combo_Bitmap = AppManager.getInstance().getBitmap(R.drawable.combo);
+        comboNumber_Bitmap = AppManager.getInstance().getBitmap(R.drawable.number_sprite);
+        laser_Bitmap = AppManager.getInstance().getBitmap(R.drawable.circle2);
 
-        rhythmCombo = new RhythmCombo(combo_bitmap, this);
+        rhythmCombo = new RhythmCombo(combo_Bitmap, this);
     }
 
     @Override
@@ -187,7 +190,7 @@ public class GameState extends Thread implements IState {
             Last = System.currentTimeMillis();
 
             //랜덤으로 노트번호를 0~2까지 정하여 생성한후 노트를 nv 추가
-            RhythmNote note = new RhythmNote(note_bitmap, random.nextInt(3), this);
+            RhythmNote note = new RhythmNote(note_Bitmap, random.nextInt(3), this);
             note_Vector.add(note);
         }
     }
@@ -201,19 +204,19 @@ public class GameState extends Thread implements IState {
         rhythmCombo.comboup();
         //판정 숫자에 따라 각기 다른 비트맵을 넣어 판정을 생성하고 jv에 넣어줌
         if(judge_num == 4) {
-            judge = new RhythmJudge(perfect_bitmap, this);
+            judge = new RhythmJudge(perfect_Bitmap, this);
         }
         else if(judge_num == 3) {
-            judge = new RhythmJudge(good_bitmap, this);
+            judge = new RhythmJudge(good_Bitmap, this);
         }
         else if(judge_num == 2) {
-            judge = new RhythmJudge(bad_bitmap, this);
+            judge = new RhythmJudge(bad_Bitmap, this);
         }
         else if(judge_num == 1) {
-            judge = new RhythmJudge(poor_bitmap, this);
+            judge = new RhythmJudge(poor_Bitmap, this);
         }
         else {
-            judge = new RhythmJudge(miss_bitmap, this);
+            judge = new RhythmJudge(miss_Bitmap, this);
             //미스가 발생할 경우 콤보를  0으로 바꾸고 cnv속 객체를 전부 지움
             rhythmCombo.comboReset();
         }
@@ -346,5 +349,31 @@ public class GameState extends Thread implements IState {
         angle = 90 + Math.toDegrees(Math.atan2(dy, dx));
         player_Vector.get(player_Num).setAngle(angle);
     }
+
+    public void check_Message(String string) {
+        StringTokenizer stringTokenizer = new StringTokenizer(string, " ");
+
+        while(stringTokenizer.hasMoreTokens()) {
+            String tag = stringTokenizer.nextToken();
+
+            switch(tag) {
+                //플레이어의 위치정보를 받아와 그에 맞게 위치를 조정
+                case "PlayerData" : {
+                    int player_Num = Integer.parseInt(stringTokenizer.nextToken());
+                    player_Vector.get(player_Num).x = Integer.parseInt(stringTokenizer.nextToken());
+                    player_Vector.get(player_Num).y = Integer.parseInt(stringTokenizer.nextToken());
+                    if(this.getPlayer_Num() != player_Num)
+                        this.player_Vector.get(player_Num).setPosition(player_Vector.get(player_Num).x, player_Vector.get(player_Num).y);
+                }
+
+                //공격정보를 수신하여 그에 맞게 공격명령
+                case "Attack" : {
+                    int player_Num = Integer.parseInt(stringTokenizer.nextToken());
+                    player_Vector.get(player_Num).make_Laser(laser_Bitmap, System.currentTimeMillis());
+                }
+            }
+        }
+    }
+
 
 }

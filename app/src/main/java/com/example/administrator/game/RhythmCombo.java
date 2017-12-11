@@ -45,7 +45,7 @@ public class RhythmCombo extends SpriteAnimation{
 
         //자리수보다 cnv속의 객체수가 적을경우 새로운 콤보넘버객체를 생성하여 그 수를 맞춰줌
         if (gs.comboNumber_Vector .size() < num) {
-            gs.comboNumber_Vector .add(new RhythmComboNumber(gs.comboNumber_bitmap));
+            gs.comboNumber_Vector .add(new RhythmComboNumber(gs.comboNumber_Bitmap));
         }
 
         //combo글자의 위치를 알맞게 조절함

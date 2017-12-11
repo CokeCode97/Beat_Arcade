@@ -7,22 +7,26 @@ import com.example.administrator.framework.GameActivity;
 import com.example.administrator.framework.R;
 import com.example.administrator.framework.SpriteAnimation;
 
+import java.util.Vector;
+
 /**
  * Created by Administrator on 2017-12-01.
  */
 
 public class Player extends ShootingObject {
-    int player_x = 1500, player_y = 500;            //플레이어의 시작좌표
-    int t2_x, t2_y, dpadCircle_x, dpadCircle_y;  //각종변수
     static int width = 98, height = 85;
     static float speed = 12f;
+
+    int player_x = 1500, player_y = 500;            //플레이어의 시작좌표
+    int t2_x, t2_y, dpadCircle_x, dpadCircle_y;  //각종변수
     double angle, dx, dy;
 
-     public Player() {
+    Vector<Laser> laser_Vector = new Vector<>();
+
+    public Player() {
          //애니메이션 정보설정
         super((AppManager.getInstance().getBitmap(R.drawable.mob_sprite)), speed, width, height);
         this.InitSpriteData(height, width, 8, 4);
-
         //몹 위치 세팅
         this.setPosition(player_x, player_y);
      }
@@ -30,7 +34,7 @@ public class Player extends ShootingObject {
 
     @Override
      public void Update(long GameTime) {
-         super.Update(GameTime);
+        super.Update(GameTime);
          //dpad로 조작중이면 무브가 동작
         if((t2_x > dpadCircle_x-100 && t2_y > dpadCircle_y - 100) && (Math.sqrt(dx*dx + dy*dy)) > 50) {
             Move(angle);
@@ -65,5 +69,17 @@ public class Player extends ShootingObject {
      public void setDis(double dx, double dy) {
          this.dx = dx;
          this.dy = dy;
+     }
+
+     //레이저를 생성함
+     //bitmap = 이미지, time_now = 객체가 생성된 시간
+     public void make_Laser(Bitmap bitmap, long time_Make) {
+        laser_Vector.add(new Laser(bitmap,this, time_Make));
+     }
+
+     //레이저를 지움
+    //laser = 지울 레이저 객체
+     public void remove_Laser(Laser laser) {
+        laser_Vector.remove(laser);
      }
 }
