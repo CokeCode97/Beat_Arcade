@@ -73,11 +73,9 @@ public class RhythmNote extends SpriteAnimation {
 
                 //최종적으로 합산된 판정값을 가지고 판정출력객체를 생성
                 gs.makeJudge(judge_point);
+
                 //콤보매니저 호출
                 gs.rhythmCombo.comboManager();
-
-                //서버에 공격했다고 메시지 전송
-                gs.clientWork.write("Attack");
 
                 //이후 노트를 삭제
                 gs.note_Vector.remove(note_num);

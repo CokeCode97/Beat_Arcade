@@ -4,7 +4,6 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Rect;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 
@@ -32,6 +31,9 @@ public class GameState extends Thread implements IState {
     Vector<RhythmNote> note_Vector = new Vector<>();
     Vector<RhythmJudge> judge_Vector = new Vector<>();
     Vector<RhythmComboNumber> comboNumber_Vector = new Vector<>();
+    Vector<Bullet> bullet_Vector = new Vector<>();
+    Vector<hp_Black> hp_black_Vector = new Vector<>();
+    Vector<Hp_Red> Hp_Red_Vector = new Vector<>();
 
     public Vector<Player> player_Vector = new Vector<>();
 
@@ -50,15 +52,12 @@ public class GameState extends Thread implements IState {
     RhythmCombo rhythmCombo;
 
     //비트맵 데이터
-    Bitmap perfect_Bitmap;
-    Bitmap good_Bitmap;
-    Bitmap bad_Bitmap;
-    Bitmap poor_Bitmap;
-    Bitmap miss_Bitmap;
+    Bitmap[] judge_Bitmap = new Bitmap[5];
     Bitmap note_Bitmap;
     Bitmap combo_Bitmap;
     Bitmap comboNumber_Bitmap;
     Bitmap laser_Bitmap;
+    Bitmap bullet_Bitmap;
 
 
     long Last = System.currentTimeMillis(); //시간을 측정할 기준 Last
@@ -67,25 +66,26 @@ public class GameState extends Thread implements IState {
     double angle;               //각도
     double dx, dy;              //D-Pad의 중심과 사용자가 누른곳 사이의 거리
 
-    int player_Num = -1;
+    int player_Num = -1, enemy_Num = -1;
     public int getPlayer_Num() {return player_Num;}
+    public int getEnemy_Num() {return enemy_Num;}
     boolean check = true;
 
 
     @Override
     public void run() {
-        int i = 0;
+        int timeCheck_XY = 0;
         while(true) {
             if(check) {
                 this.Update();
-                //clientWork.write("PlayerData " + player_Vector.get(player_Num).getX() + " " + player_Vector.get(player_Num).getY());
+
                 clientWork.write("PlayerData " + player_Vector.get(player_Num).getMove_Check() + " " + player_Vector.get(player_Num).getAngle());
-                if(i > 200) {
+                if(timeCheck_XY > 200) {
                     clientWork.write("PlayerDataXY " + player_Vector.get(player_Num).getX() + " " + player_Vector.get(player_Num).getY());
 
-                    i = 0;
+                    timeCheck_XY = 0;
                 }
-                i++;
+                timeCheck_XY++;
                 check = false;
             }
         }
@@ -100,8 +100,21 @@ public class GameState extends Thread implements IState {
         clientWork = gameActivity.getClient();
         clientWork.setGameState(this);
         player_Num = gameActivity.getMyPlayerNum();
-        player_Vector.add(new Player());
-        player_Vector.add(new Player());
+
+        if(player_Num == 0) {
+            enemy_Num = 1;
+        } else {
+            enemy_Num = 0;
+        }
+        player_Vector.add(new Player(this));
+        player_Vector.add(new Player(this));
+
+
+        hp_black_Vector.add(new hp_Black(0));
+        hp_black_Vector.add(new hp_Black(700));
+
+        Hp_Red_Vector.add(new Hp_Red(0));
+        Hp_Red_Vector.add(new Hp_Red(700));
 
         clientWork.start();
     }
@@ -110,15 +123,16 @@ public class GameState extends Thread implements IState {
     //시작될때 여러 비트맵 데이터나 객체들을 메모리에 올림
     @Override
     public void Init() {
-        perfect_Bitmap = AppManager.getInstance().getBitmap(R.drawable.perfect);
-        good_Bitmap = AppManager.getInstance().getBitmap(R.drawable.good);
-        bad_Bitmap = AppManager.getInstance().getBitmap(R.drawable.bad);
-        poor_Bitmap = AppManager.getInstance().getBitmap(R.drawable.poor);
-        miss_Bitmap = AppManager.getInstance().getBitmap(R.drawable.miss);
+        judge_Bitmap[0] = AppManager.getInstance().getBitmap(R.drawable.miss);
+        judge_Bitmap[1] = AppManager.getInstance().getBitmap(R.drawable.poor);
+        judge_Bitmap[2] = AppManager.getInstance().getBitmap(R.drawable.bad);
+        judge_Bitmap[3] = AppManager.getInstance().getBitmap(R.drawable.good);
+        judge_Bitmap[4] = AppManager.getInstance().getBitmap(R.drawable.perfect);
         note_Bitmap = AppManager.getInstance().getBitmap(R.drawable.note);
         combo_Bitmap = AppManager.getInstance().getBitmap(R.drawable.combo);
         comboNumber_Bitmap = AppManager.getInstance().getBitmap(R.drawable.number_sprite);
-        laser_Bitmap = AppManager.getInstance().getBitmap(R.drawable.circle2);
+        laser_Bitmap = AppManager.getInstance().getBitmap(R.drawable.laser);
+        bullet_Bitmap = AppManager.getInstance().getBitmap(R.drawable.bullet);
 
         rhythmCombo = new RhythmCombo(combo_Bitmap, this);
     }
@@ -151,6 +165,11 @@ public class GameState extends Thread implements IState {
             }
         }
 
+        //모든 Bullet 객체의 Update를 호출
+        for (int i = 0; i < bullet_Vector.size(); i++) {
+            bullet_Vector.get(i).Update(GameTime);
+        }
+
         MakeNote();
     }
 
@@ -158,10 +177,24 @@ public class GameState extends Thread implements IState {
     //객체를 렌더링
     @Override
     public void Render(Canvas canvas) {
-        //노트가 내려오는 부분의 배경을 그려줌
-        rhythmBackGourndTop.Draw(canvas);
+        //슈팅게임의 배경을 그려줌
         shootingBackground.Draw(canvas);
 
+        //플레이어와 레이저를 그림
+        for (int i = 0; i < player_Vector.size(); i++) {
+            player_Vector.get(i).Draw(canvas);
+            for(int j = 0; j < player_Vector.get(i).laser_Vector.size(); j++) {
+                player_Vector.get(i).laser_Vector.get(j).Draw(canvas);
+            }
+        }
+
+        //모든 Bullet 객체를 드로우
+        for (int i = 0; i < bullet_Vector.size(); i++) {
+            bullet_Vector.get(i).Draw(canvas);
+        }
+
+        //노트가 내려오는 부분의 배경을 그려줌
+        rhythmBackGourndTop.Draw(canvas);
 
         //nv벡터 안에 있는 모든 객체를 그려줌
         for (int i = 0; i < note_Vector.size(); i++) {
@@ -180,21 +213,20 @@ public class GameState extends Thread implements IState {
                 comboNumber_Vector .get(i).Draw(canvas);
             }
         }
+        //hp벡터 안에 있는 모든 객체를 그려줌
+        for (int i = 0; i < hp_black_Vector.size(); i++) {
+            hp_black_Vector.get(i).Draw(canvas);
+        }
+
+        //hp벡터 안에 있는 모든 객체를 그려줌
+        for (int i = 0; i < Hp_Red_Vector.size(); i++) {
+            Hp_Red_Vector.get(i).Draw(canvas);
+        }
 
         //버튼들을 그려줌
         rhythmBackGroundBottom1.Draw(canvas);
         rhythmBackGroundBottom2.Draw(canvas);
         rhythmBackGroundBottom3.Draw(canvas);
-
-
-        //플레이어와 레이저를 그림
-        for (int i = 0; i < player_Vector.size(); i++) {
-            player_Vector.get(i).Draw(canvas);
-            for(int j = 0; j < player_Vector.get(i).laser_Vector.size(); j++) {
-                player_Vector.get(i).laser_Vector.get(j).Draw(canvas);
-            }
-        }
-
 
 
         dpad_Circle.Draw(canvas);
@@ -219,27 +251,21 @@ public class GameState extends Thread implements IState {
     //judge_num = 판정점수
     public void makeJudge(int judge_num) {
         RhythmJudge judge;
+        if(judge_num != 0) {
+            rhythmCombo.comboup();
+        }
+        judge = new RhythmJudge(judge_Bitmap[judge_num], this);
 
-        rhythmCombo.comboup();
         //판정 숫자에 따라 각기 다른 비트맵을 넣어 판정을 생성하고 jv에 넣어줌
-        if(judge_num == 4) {
-            judge = new RhythmJudge(perfect_Bitmap, this);
-        }
-        else if(judge_num == 3) {
-            judge = new RhythmJudge(good_Bitmap, this);
-        }
-        else if(judge_num == 2) {
-            judge = new RhythmJudge(bad_Bitmap, this);
-        }
-        else if(judge_num == 1) {
-            judge = new RhythmJudge(poor_Bitmap, this);
-        }
-        else {
-            judge = new RhythmJudge(miss_Bitmap, this);
-            //미스가 발생할 경우 콤보를  0으로 바꾸고 cnv속 객체를 전부 지움
+        if(judge_num == 0)
             rhythmCombo.comboReset();
-        }
+
+
         judge_Vector.add(judge);
+    }
+
+    public void makeBullet(double angle, int x, int y){
+        bullet_Vector.add(new Bullet(bullet_Bitmap, angle, x, y, this));
     }
 
 
@@ -255,6 +281,105 @@ public class GameState extends Thread implements IState {
     public void removeJudge(RhythmJudge judge) {
         judge_Vector.remove(judge);
     }
+
+    //선택된 Bullet을 제거함
+    //bullet = 제거할 판정표시객체
+    public void removeBullet(Bullet bullet) {
+        bullet_Vector.remove(bullet);
+    }
+
+
+    // TODO 클라이언트에서 수신한 메세지를 분석하고 그에맞는 일을 처리함
+    public void check_Message(String string) {
+        StringTokenizer stringTokenizer = new StringTokenizer(string, " ");
+
+        while(stringTokenizer.hasMoreTokens()) {
+            String tag = stringTokenizer.nextToken();
+
+            switch(tag) {
+                //플레이어의 위치정보를 받아와 그에 맞게 위치를 조정
+                case "PlayerData" : {
+                    int player_Num = Integer.parseInt(stringTokenizer.nextToken());
+
+                    if(this.getPlayer_Num() != player_Num) {
+                        player_Vector.get(player_Num).setMove_Check(Boolean.parseBoolean(stringTokenizer.nextToken()));
+                        player_Vector.get(player_Num).setAngle(Double.parseDouble(stringTokenizer.nextToken()));
+                    } else {
+                        stringTokenizer.nextToken();
+                        stringTokenizer.nextToken();
+                    }
+
+                    break;
+                }
+
+                //서버에서 받아온 값으로 캐릭터의 좌표를 동기화 시킴
+                case "PlayerDataXY" : {
+                    int player_Num = Integer.parseInt(stringTokenizer.nextToken());
+                    player_Vector.get(player_Num).x = Integer.parseInt(stringTokenizer.nextToken());
+                    player_Vector.get(player_Num).y = Integer.parseInt(stringTokenizer.nextToken());
+                    this.player_Vector.get(player_Num).setPosition(player_Vector.get(player_Num).x, player_Vector.get(player_Num).y);
+
+                    break;
+                }
+
+                case "BulletMake" : {
+                    double angle = Double.parseDouble(stringTokenizer.nextToken());
+                    int x = Integer.parseInt(stringTokenizer.nextToken());
+                    int y = Integer.parseInt(stringTokenizer.nextToken());
+
+                    makeBullet(angle, x, y);
+                    break;
+                }
+
+                //공격정보를 수신하여 그에 맞게 공격명령
+                case "Attack" : {
+                    int player_Num = Integer.parseInt(stringTokenizer.nextToken());
+                    int combo = Integer.parseInt(stringTokenizer.nextToken());
+                    player_Vector.get(player_Num).make_Laser(laser_Bitmap, System.currentTimeMillis(), combo);
+
+                    break;
+                }
+
+                //충돌 판정
+                case "Collsion" : {
+                    int collider_Player = Integer.parseInt(stringTokenizer.nextToken());
+                    String collider_Object = stringTokenizer.nextToken();
+
+                    switch (collider_Object) {
+                        //레이저와 충돌했을때
+                        case "Laser" : {
+                            int combo = Integer.parseInt(stringTokenizer.nextToken());
+                            //플레이어에게 콤보에 따른 데미지를 줌
+                            player_Vector.get(collider_Player).hit(combo);
+                            break;
+                        }
+                        case "Bullet" : {
+                            int collider_Index = Integer.parseInt(stringTokenizer.nextToken());
+                            //플레이어에게 5의 데미지를 주고
+                            player_Vector.get(collider_Player).hit(5);
+                            //50%의 이동속도 감소효과 디버프를 검
+                            player_Vector.get(collider_Player).setSlow(0.5f, System.currentTimeMillis());
+                            //만약 불릿벡터 사이즈가 콜리더인덱스보다 크면 콜리더 인덱스의 객체를 파괴함
+                            if(bullet_Vector.size() > collider_Index)
+                                bullet_Vector.remove(collider_Index);
+                            break;
+                        }
+                    }
+                    break;
+                }
+            }
+        }
+    }
+
+    //충돌감지 메소드
+    //rt = 각각 충돌검사를 할 객체들의 Rect
+    public boolean collision_Check(Rect rt1, Rect rt2) {
+        if(rt1.right >= rt2.left && rt1.left <= rt2.right && rt1.top <= rt2.bottom && rt1.bottom >= rt2.top) {
+            return true;
+        }
+        return false;
+    }
+
 
 
     @Override
@@ -357,7 +482,7 @@ public class GameState extends Thread implements IState {
         //몹에 무빙을 위한 판정요소들을 넣어줌
         player_Vector.get(player_Num).setDis(dx, dy);
         player_Vector.get(player_Num).setTouch(t2_x, t2_y);
-        player_Vector.get(player_Num).setdpadCircle(dpad_Circle.getX_R(), dpad_Circle.getY_R());
+        player_Vector.get(player_Num).setDpadCircle(dpad_Circle.getX_R(), dpad_Circle.getY_R());
 
         return true;
     }
@@ -371,50 +496,4 @@ public class GameState extends Thread implements IState {
         angle = 90 + Math.toDegrees(Math.atan2(dy, dx));
         player_Vector.get(player_Num).setAngle(angle);
     }
-
-
-    // TODO 클라이언트에서 수신한 메세지를 분석하고 그에맞는 일을 처리함
-    public void check_Message(String string) {
-        StringTokenizer stringTokenizer = new StringTokenizer(string, " ");
-
-        while(stringTokenizer.hasMoreTokens()) {
-            String tag = stringTokenizer.nextToken();
-
-            switch(tag) {
-                //플레이어의 위치정보를 받아와 그에 맞게 위치를 조정
-                case "PlayerData" : {
-                    int player_Num = Integer.parseInt(stringTokenizer.nextToken());
-
-                    if(this.getPlayer_Num() != player_Num) {
-                        player_Vector.get(player_Num).setMove_Check(Boolean.parseBoolean(stringTokenizer.nextToken()));
-                        player_Vector.get(player_Num).setAngle(Double.parseDouble(stringTokenizer.nextToken()));
-                    } else {
-                        stringTokenizer.nextToken();
-                        stringTokenizer.nextToken();
-                    }
-
-                    break;
-                }
-
-                //서버에서 받아온 값으로 캐릭터의 좌표를 동기화 시킴
-                case "PlayerDataXY" : {
-                    player_Vector.get(player_Num).x = Integer.parseInt(stringTokenizer.nextToken());
-                    player_Vector.get(player_Num).y = Integer.parseInt(stringTokenizer.nextToken());
-                    this.player_Vector.get(player_Num).setPosition(player_Vector.get(player_Num).x, player_Vector.get(player_Num).y);
-
-                    break;
-                }
-
-                //공격정보를 수신하여 그에 맞게 공격명령
-                case "Attack" : {
-                    int player_Num = Integer.parseInt(stringTokenizer.nextToken());
-                    player_Vector.get(player_Num).make_Laser(laser_Bitmap, System.currentTimeMillis());
-
-                    break;
-                }
-            }
-        }
-    }
-
-
 }

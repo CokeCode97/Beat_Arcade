@@ -1,11 +1,10 @@
 package com.example.administrator.game;
 
 import android.graphics.Bitmap;
+import android.graphics.Rect;
 
 import com.example.administrator.framework.AppManager;
-import com.example.administrator.framework.GameActivity;
 import com.example.administrator.framework.R;
-import com.example.administrator.framework.SpriteAnimation;
 
 import java.util.Vector;
 
@@ -14,27 +13,49 @@ import java.util.Vector;
  */
 
 public class Player extends ShootingObject {
-    static int width = 98, height = 85; //플레이어의 크기
-    static float speed = 12f;           //플레이어의 속도
+    static int width = 98, height = 86; //플레이어의 크기
+    float speed_Ore = 12f;              //플레이어의 속도
+    float speed_Pre = 12f;
 
     //터치좌표, 디패드의 중심좌표
     int t2_x, t2_y, dpadCircle_x, dpadCircle_y;
+
+    //체력
+    double HP_Max = 50;
+    double HP_Pre = 50;
 
     //각도, 중심과 터치좌표의 거리
     double angle, dx, dy;
 
     //무브체크
     boolean move_Check = false;
+    boolean slow_Check = false;
+
+    //게임스테이트
+    GameState gameState;
 
     //레이저를 담는 벡터
     Vector<Laser> laser_Vector = new Vector<>();
 
-    public Player() {
+    //충돌박스
+    Rect rect_collision;
+
+    //슬로우 체크시간
+    long slow_Time;
+
+
+    //플레이어의 생성자
+    //gamestate = 게임스테이트를 가져옴
+    public Player(GameState gameState) {
          //애니메이션 정보설정
-        super((AppManager.getInstance().getBitmap(R.drawable.mob_sprite)), speed, width, height);
+        super((AppManager.getInstance().getBitmap(R.drawable.mob_sprite)), width, height);
         this.InitSpriteData(height, width, 8, 4);
+        //게임스테이트 세팅
+        this.gameState = gameState;
         //몹 위치 세팅
         this.setPosition(710, 540);
+        //충돌박스
+        rect_collision = new Rect(getX(), getY(), getX()+width, getY()+height);
      }
 
 
@@ -43,8 +64,56 @@ public class Player extends ShootingObject {
         super.Update(GameTime);
          //dpad로 조작중이면 무브가 동작
         if(move_Check) {
-            Move(angle);
+            Move(angle, speed_Pre);
+            rect_collision = new Rect(getX(), getY(), getX()+width, getY()+height);
         }
+
+        //슬로우가 걸려있다면 작동
+        if(slow_Check) {
+            //슬로우를 건시간으로 부터 2초가 지났는지 체크
+            if(GameTime - slow_Time > 2000) {
+                //속도를 원래 속도로 변경하고 슬로우를 해제
+                speed_Pre = speed_Ore;
+                slow_Check = false;
+            }
+        }
+
+        //이 플레이어 객체가 플레이어 본인의 객체라면 충돌판정을 실행
+        if(gameState.player_Num == gameState.player_Vector.indexOf(this))
+            collision();
+     }
+
+     //공격을 맞음
+     //combo = 해당 레이저가 발생될떄 가지고 있던 콤보
+     public void hit(int combo) {
+        //콤보만큼 체력을 감소시킴
+        HP_Pre -= combo;
+        //체력이 0이되면 제거함
+        if(HP_Pre <= 0) {
+            gameState.player_Vector.remove(this);
+        }
+        //체력상황에 따라 체력바를 조절
+        gameState.Hp_Red_Vector.get(gameState.player_Vector.indexOf(this)).hp_Update(HP_Pre/HP_Max);
+     }
+
+     //슬로우를 설정함
+     public void setSlow( float slow_Ratio, long slow_Time) {
+        //슬로우 상태가 아닐때에만 작동
+        if(!slow_Check) {
+            this.slow_Check = true;
+            this.speed_Pre = this.speed_Pre*slow_Ratio;
+            this.slow_Time = slow_Time;
+        }
+     }
+
+     //충돌 요청을 하고 충돌시 충돌했다고 서버에 알림
+     public void collision() {
+        for(int i = 0; i < gameState.bullet_Vector.size(); i++) {
+            if(gameState.collision_Check(gameState.bullet_Vector.get(i).rect_collision, this.rect_collision)) {
+                gameState.clientWork.write("Collision " + gameState.player_Vector.indexOf(this) + " " + "Bullet " + i);
+            }
+        }
+
      }
 
 
@@ -62,6 +131,9 @@ public class Player extends ShootingObject {
      //무브를 리턴
      public boolean getMove_Check() { return move_Check; }
 
+     //충돌박스를 리턴
+     public Rect getRect_collision() { return rect_collision; }
+
 
      //터치좌표를 받아옴
      //t2_x = x좌표, t2_y = y좌표
@@ -73,7 +145,7 @@ public class Player extends ShootingObject {
 
      //d-pad큰 원의 좌표를 가져옴
      //dapadCircle_x = x좌표, dapadCircle_y = y축 좌표
-     public void setdpadCircle(int dpadCircle_x, int dpadCircle_y) {
+     public void setDpadCircle(int dpadCircle_x, int dpadCircle_y) {
         this.dpadCircle_x = dpadCircle_x;
         this.dpadCircle_y = dpadCircle_y;
      }
@@ -88,8 +160,8 @@ public class Player extends ShootingObject {
 
      //레이저를 생성함
      //bitmap = 이미지, time_now = 객체가 생성된 시간
-     public void make_Laser(Bitmap bitmap, long time_Make) {
-        laser_Vector.add(new Laser(bitmap,this, time_Make));
+     public void make_Laser(Bitmap bitmap, long time_Make, int combo) {
+        laser_Vector.add(new Laser(bitmap,this, time_Make, combo));
      }
 
      //레이저를 지움
@@ -97,4 +169,5 @@ public class Player extends ShootingObject {
      public void remove_Laser(Laser laser) {
         laser_Vector.remove(laser);
      }
+
 }

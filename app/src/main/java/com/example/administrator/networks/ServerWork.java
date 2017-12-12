@@ -1,7 +1,5 @@
 package com.example.administrator.networks;
 
-import android.util.Log;
-
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.InputStreamReader;
@@ -9,6 +7,7 @@ import java.io.OutputStreamWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.HashMap;
+import java.util.Random;
 import java.util.StringTokenizer;
 import java.util.Vector;
 
@@ -17,6 +16,7 @@ import java.util.Vector;
  */
 
 public class ServerWork extends Thread {
+    Random random = new Random();
     private boolean flag = true;
 
     private String myName;
@@ -63,6 +63,7 @@ public class ServerWork extends Thread {
 
     @Override
     public void run() {
+        int timeCheck_bullet = 0;
         try {
             while (!serverMap.containsKey(myName) || !serverMap.containsKey(opponentName)) {
                 Socket socket = serverSocket.accept();
@@ -79,8 +80,15 @@ public class ServerWork extends Thread {
             // TODO 서버작업
             while (flag) {
                 String sendData = "PlayerData " + 0 + " " + player_Vector.get(0).move_Check + " " + player_Vector.get(0).angle +" " + "PlayerData " + 1 + " " + player_Vector.get(1).move_Check + " " + player_Vector.get(1).angle;
-
                 all_Write(sendData);
+
+                if(timeCheck_bullet > 60) {
+                    int angle = random.nextInt(360);
+                    String bulletData = "BulletMake " + 90 + " " + 1240 + " " + 540;
+                    all_Write(bulletData);
+                    timeCheck_bullet = 0;
+                }
+                timeCheck_bullet ++;
 
                 this.sleep(15);
             }
@@ -173,7 +181,7 @@ public class ServerWork extends Thread {
                     player_Vector.get(player_Num).x = Integer.parseInt(stringTokenizer.nextToken());
                     player_Vector.get(player_Num).y = Integer.parseInt(stringTokenizer.nextToken());
 
-                    String sendData = "PlayerDataXY " + player_Num + " " + player_Vector.get(0).x + " " + player_Vector.get(0).y;
+                    String sendData = "PlayerDataXY " + player_Num + " " + player_Vector.get(player_Num).x + " " + player_Vector.get(player_Num).y;
 
                     all_Write(sendData);
                     break;
@@ -181,7 +189,28 @@ public class ServerWork extends Thread {
 
                 //노트를 맞출때 호출되며 공격명령을 전달
                 case "Attack" : {
-                    all_Write("Attack " + player_Num);
+                    int combo = Integer.parseInt(stringTokenizer.nextToken());
+                    all_Write("Attack " + player_Num + " " + combo);
+                    break;
+                }
+
+                //충돌 판정
+                case "Collision" : {
+                    int collider_Player = Integer.parseInt(stringTokenizer.nextToken());
+                    String collider_Object = stringTokenizer.nextToken();
+                    switch (collider_Object) {
+                        case "Laser" : {
+                            int combo = Integer.parseInt(stringTokenizer.nextToken());
+                            all_Write("Collsion " + collider_Player + " " + collider_Object + " " + combo);
+                            break;
+                        }
+                        case "Bullet" : {
+                            int collider_Index = Integer.parseInt(stringTokenizer.nextToken());
+                            all_Write("Collsion " + collider_Player + " " + collider_Object + " " + collider_Index);
+                            break;
+                        }
+                    }
+                    //int collider_Index = Integer.parseInt(stringTokenizer.nextToken());
                     break;
                 }
             }
