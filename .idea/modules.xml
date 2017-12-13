@@ -3,10 +3,12 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://C:\Beat_Arcade-master (2)\Beat_Arcade-master\Beat_Arcade.iml" filepath="C:\Beat_Arcade-master (2)\Beat_Arcade-master\Beat_Arcade.iml" />
-      <module fileurl="file://$PROJECT_DIR$/Beat_Arcade-master.iml" filepath="$PROJECT_DIR$/Beat_Arcade-master.iml" />
+      <module fileurl="file://C:\Beat_Arcade_Game\Beat_Arcade-master.iml" filepath="C:\Beat_Arcade_Game\Beat_Arcade-master.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Beat_Arcade_Game.iml" filepath="$PROJECT_DIR$/Beat_Arcade_Game.iml" />
       <module fileurl="file://C:\Users\yylwd\Desktop\JavaProject-master\JavaProject-master\FrameWork.iml" filepath="C:\Users\yylwd\Desktop\JavaProject-master\JavaProject-master\FrameWork.iml" />
       <module fileurl="file://C:\Beat_Arcade\FrameWork.iml" filepath="C:\Beat_Arcade\FrameWork.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://C:\Beat_Arcade_Game\app\app.iml" filepath="C:\Beat_Arcade_Game\app\app.iml" />
     </modules>
   </component>
 </project>
