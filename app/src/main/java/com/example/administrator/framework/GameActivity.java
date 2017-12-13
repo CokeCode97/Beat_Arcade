@@ -67,6 +67,7 @@ public class GameActivity extends Activity {
 
         gameView = new GameView(this);
         setContentView(gameView);
+        clientWork.start();
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
     }
 

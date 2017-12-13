@@ -1,5 +1,7 @@
 package com.example.administrator.networks;
 
+import android.util.Log;
+
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.InputStreamReader;
@@ -27,7 +29,9 @@ public class ServerWork extends Thread {
 
     private ServerSocket serverSocket;
 
-
+    private boolean[] playerReady_Check = new boolean[2];
+    private boolean allready_Check = false;
+    private boolean start_Check = false;
 
     private HashMap<String, ServerThread> serverMap;
     private Vector<Player> player_Vector = new Vector<>();
@@ -58,6 +62,10 @@ public class ServerWork extends Thread {
             e.printStackTrace();
         }
 
+        for(int i = 0; i < playerReady_Check.length; i++) {
+            playerReady_Check[i] = false;
+        }
+
         this.start();
     }
 
@@ -79,18 +87,24 @@ public class ServerWork extends Thread {
 
             // TODO 서버작업
             while (flag) {
-                String sendData = "PlayerData " + 0 + " " + player_Vector.get(0).move_Check + " " + player_Vector.get(0).angle +" " + "PlayerData " + 1 + " " + player_Vector.get(1).move_Check + " " + player_Vector.get(1).angle;
-                all_Write(sendData);
+                if(playerReady_Check[0]&& playerReady_Check[1]) {
+                    if(!start_Check) {
+                        sleep(500);
+                        start_Check = true;
+                    }
+                    String sendData = "PlayerData " + 0 + " " + player_Vector.get(0).move_Check + " " + player_Vector.get(0).angle + " " + "PlayerData " + 1 + " " + player_Vector.get(1).move_Check + " " + player_Vector.get(1).angle;
+                    all_Write(sendData);
 
-                if(timeCheck_bullet > 60) {
-                    int angle = random.nextInt(360);
-                    String bulletData = "BulletMake " + angle + " " + 1240 + " " + 540;
-                    all_Write(bulletData);
-                    timeCheck_bullet = 0;
+                    if (timeCheck_bullet > 60) {
+                        int angle = random.nextInt(360);
+                        String bulletData = "BulletMake " + angle + " " + 1240 + " " + 540;
+                        all_Write(bulletData);
+                        timeCheck_bullet = 0;
+                    }
+                    timeCheck_bullet++;
+
+                    this.sleep(15);
                 }
-                timeCheck_bullet ++;
-
-                this.sleep(15);
             }
 
         } catch (Exception e) {
@@ -167,6 +181,17 @@ public class ServerWork extends Thread {
             StringTokenizer stringTokenizer = new StringTokenizer(string, " ");
             String tag = stringTokenizer.nextToken();
             switch (tag) {
+                //플레이어가 준비됨
+                case "Ready" : {
+                    if(!allready_Check) {
+                        playerReady_Check[player_Num] = true;
+                        if (playerReady_Check[0] && playerReady_Check[1]) {
+                            all_Write("AllReady");
+                            allready_Check = true;
+                        }
+                    }
+                    break;
+                }
                 //클라이언트로 부터 지속적으로 받아오는 캐릭터의 무브체크와 무브각도
                 case "PlayerData" : {
                     /*player_Vector.get(player_Num).x = Integer.parseInt(stringTokenizer.nextToken());

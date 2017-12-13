@@ -22,19 +22,17 @@ import java.util.Vector;
  */
 
 public class GameState extends Thread implements IState {
-    Random random = new Random();
-    GameActivity gameActivity;
-    ClientWork clientWork;
+    private GameActivity gameActivity;
 
 
     public static Vector<Player> player_Vector = new Vector<>();
 
     //게임 배경을 그려주는 객체들
-    RhythmBackGourndTop rhythmBackGourndTop = new RhythmBackGourndTop();
-    RhythmBackGroundBottom1 rhythmBackGroundBottom1 = new RhythmBackGroundBottom1();
-    RhythmBackGroundBottom2 rhythmBackGroundBottom2 = new RhythmBackGroundBottom2();
-    RhythmBackGroundBottom3 rhythmBackGroundBottom3 = new RhythmBackGroundBottom3();
-    ShootingBackground shootingBackground = new ShootingBackground();
+    private RhythmBackGourndTop rhythmBackGourndTop = new RhythmBackGourndTop();
+    private RhythmBackGroundBottom1 rhythmBackGroundBottom1 = new RhythmBackGroundBottom1();
+    private RhythmBackGroundBottom2 rhythmBackGroundBottom2 = new RhythmBackGroundBottom2();
+    private RhythmBackGroundBottom3 rhythmBackGroundBottom3 = new RhythmBackGroundBottom3();
+    private ShootingBackground shootingBackground = new ShootingBackground();
 
     //Dpad를 구성하는 원들
     private Circle dpad_Circle = new Circle();
@@ -84,9 +82,9 @@ public class GameState extends Thread implements IState {
             if (update_Check) {
                 this.Update();
 
-                clientWork.write("PlayerData " + player_Vector.get(player_Num).getMove_Check() + " " + player_Vector.get(player_Num).getAngle());
+                ClientWork.write("PlayerData " + player_Vector.get(player_Num).getMove_Check() + " " + player_Vector.get(player_Num).getAngle());
                 if (timeCheck_XY > 200) {
-                    clientWork.write("PlayerDataXY " + player_Vector.get(player_Num).getX() + " " + player_Vector.get(player_Num).getY());
+                    ClientWork.write("PlayerDataXY " + player_Vector.get(player_Num).getX() + " " + player_Vector.get(player_Num).getY());
 
                     timeCheck_XY = 0;
                 }
@@ -103,10 +101,6 @@ public class GameState extends Thread implements IState {
     public GameState(Context context) {
         //게임액티비티를 저장
         gameActivity = (GameActivity) context;
-
-        //클라이언트 워크를 생성하고 저장
-        clientWork = gameActivity.getClient();
-        clientWork.setGameState(this);
 
         //게임액티비티에 있는 값으로 플레이어 넘버를 정해줌
         player_Num = gameActivity.getMyPlayerNum();
@@ -144,9 +138,6 @@ public class GameState extends Thread implements IState {
         //체력바 (체력표시)를 생성함
         ObjectManager.hp_Red_Vector.add(new HP_Red(0));
         ObjectManager.hp_Red_Vector.add(new HP_Red(700));
-
-        //클라이언트 워크쓰레드를 시작
-        clientWork.start();
     }
 
 
@@ -369,97 +360,5 @@ public class GameState extends Thread implements IState {
 
         angle = 90 + Math.toDegrees(Math.atan2(dy, dx));
         player_Vector.get(player_Num).setAngle(angle);
-    }
-
-
-    // TODO 클라이언트에서 수신한 메세지를 분석하고 그에맞는 일을 처리함
-    public void check_Message(String string) {
-        //데이터를 분석하기 위해 스트링 토크나이저를 생성
-        StringTokenizer stringTokenizer = new StringTokenizer(string, " ");
-
-        //패킷데이터가 없을때 까지 와일문으로 분석
-        while (stringTokenizer.hasMoreTokens()) {
-            //이 패킷이 어떤 패킷인지 알아내기 위해 태그를 때어냄
-            String tag = stringTokenizer.nextToken();
-
-            //태그에 따라 다른 작동을 함
-            switch (tag) {
-                //플레이어의 위치정보를 받아와 그에 맞게 위치를 조정
-                case "PlayerData": {
-                    int player_Num = Integer.parseInt(stringTokenizer.nextToken());
-
-                    //자신의 캐릭터의 데이터가 아닐경우에만 해당 번호의 캐릭터를 움직임
-                    if (this.getPlayer_Num() != player_Num) {
-                        player_Vector.get(player_Num).setMove_Check(Boolean.parseBoolean(stringTokenizer.nextToken()));
-                        player_Vector.get(player_Num).setAngle(Double.parseDouble(stringTokenizer.nextToken()));
-                    } else {
-                        stringTokenizer.nextToken();
-                        stringTokenizer.nextToken();
-                    }
-
-                    break;
-                }
-
-                //서버에서 받아온 값으로 캐릭터의 좌표를 동기화 시킴
-                case "PlayerDataXY": {
-                    //플레이어들을 받아온 좌표값으로 이동시킴
-                    int player_Num = Integer.parseInt(stringTokenizer.nextToken());
-                    player_Vector.get(player_Num).x = Integer.parseInt(stringTokenizer.nextToken());
-                    player_Vector.get(player_Num).y = Integer.parseInt(stringTokenizer.nextToken());
-                    this.player_Vector.get(player_Num).setPosition(player_Vector.get(player_Num).x, player_Vector.get(player_Num).y);
-
-                    break;
-                }
-
-                //서버에서 주기적으로 보내는 공공의적(총알)생성메세지
-                case "BulletMake": {
-                    double angle = Double.parseDouble(stringTokenizer.nextToken());
-                    int x = Integer.parseInt(stringTokenizer.nextToken());
-                    int y = Integer.parseInt(stringTokenizer.nextToken());
-
-                    ObjectManager.makeBullet(angle, x, y);
-                    break;
-                }
-
-                //공격정보를 수신하여 그에 맞게 공격명령
-                case "Attack": {
-                    int player_Num = Integer.parseInt(stringTokenizer.nextToken());
-                    int combo = Integer.parseInt(stringTokenizer.nextToken());
-                    player_Vector.get(player_Num).make_Laser(laser_Bitmap, System.currentTimeMillis(), combo);
-
-                    break;
-                }
-
-                //충돌 판정
-                case "Collsion": {
-                    int collider_Player = Integer.parseInt(stringTokenizer.nextToken());
-                    String collider_Object = stringTokenizer.nextToken();
-
-                    switch (collider_Object) {
-                        //레이저와 충돌했을때
-                        case "Laser": {
-                            int combo = Integer.parseInt(stringTokenizer.nextToken());
-                            //플레이어에게 콤보에 따른 데미지를 줌
-                            player_Vector.get(collider_Player).hit(combo);
-
-                            break;
-                        }
-                        case "Bullet": {
-                            int collider_Index = Integer.parseInt(stringTokenizer.nextToken());
-                            //플레이어에게 5의 데미지를 주고
-                            player_Vector.get(collider_Player).hit(5);
-                            //50%의 이동속도 감소효과 디버프를 검
-                            player_Vector.get(collider_Player).setSlow(0.5f, System.currentTimeMillis());
-                            //만약 불릿벡터 사이즈가 콜리더인덱스보다 크면 콜리더 인덱스의 객체를 파괴함
-                            if (ObjectManager.bullet_Vector.size() > collider_Index)
-                                ObjectManager.bullet_Vector.remove(collider_Index);
-
-                            break;
-                        }
-                    }
-                    break;
-                }
-            }
-        }
     }
 }

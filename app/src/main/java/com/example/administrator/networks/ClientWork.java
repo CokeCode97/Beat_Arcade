@@ -1,6 +1,7 @@
 package com.example.administrator.networks;
 
 import com.example.administrator.game.GameState;
+import com.example.administrator.game.PacketManager;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -58,7 +59,7 @@ public class ClientWork extends Thread {
             while (flag) {
                 try {
                     readData = reader.readLine();
-                    gameState.check_Message(readData);
+                    PacketManager.check_Message(readData);
 
                 } catch (NullPointerException e) {
                     e.printStackTrace();

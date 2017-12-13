@@ -2,6 +2,7 @@ package com.example.administrator.game;
 
 import android.graphics.Bitmap;
 import android.graphics.Rect;
+import android.util.Log;
 
 import com.example.administrator.framework.AppManager;
 import com.example.administrator.framework.R;
@@ -106,6 +107,7 @@ public class Player extends ShootingObject {
         }
         //체력상황에 따라 체력바를 조절
         ObjectManager.hp_Red_Vector.get(GameState.player_Vector.indexOf(this)).hp_Update(HP_Pre/HP_Max);
+        Log.d("check", "hp_Update" + " " +GameState.player_Vector.indexOf(this));
     }
 
 
