@@ -8,6 +8,8 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.Socket;
+import java.util.StringTokenizer;
+import java.util.Vector;
 
 /**
  * Created by yylwd on 2017-12-03.
@@ -19,15 +21,21 @@ public class ClientWork extends Thread {
     private Socket socket;
 
     private BufferedReader reader;
-    private BufferedWriter writer;
+    private static BufferedWriter writer;
 
     private String readData = "";
     public String getReadData() {
         return readData;
     }
 
+    private Vector<Player> player_Vector = new Vector<>();
 
     private GameState gameState;
+
+    class Player {
+        int x;
+        int y;
+    }
 
     public ClientWork(String serverIP, int gamePort) {
         try {
@@ -37,6 +45,9 @@ public class ClientWork extends Thread {
         } catch (Exception e) {
             e.printStackTrace();
         }
+        player_Vector.add(new Player());
+        player_Vector.add(new Player());
+        //this.start();
         //TODO GameState생성자에서 시작
     }
 
@@ -60,7 +71,7 @@ public class ClientWork extends Thread {
         }
     }
 
-    public void write(String writeData) {
+    public static void write(String writeData) {
         try {
             writer.write(writeData + "\n");
             writer.flush();

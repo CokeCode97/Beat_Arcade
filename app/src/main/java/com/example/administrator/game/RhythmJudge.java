@@ -2,8 +2,6 @@ package com.example.administrator.game;
 
 import android.graphics.Bitmap;
 
-import com.example.administrator.framework.AppManager;
-import com.example.administrator.framework.R;
 import com.example.administrator.framework.SpriteAnimation;
 
 /**
@@ -12,20 +10,18 @@ import com.example.administrator.framework.SpriteAnimation;
 
 //리듬판정을 그리는객체
 public class RhythmJudge extends SpriteAnimation {
-    GameState gs;
     int note_x = 113, note_y = 200;
     float note_speed = 0.03f;
 
     //생성될때 GameState와 Bitmap데이터를 가져와 상황에 맞는 이미지 출력
     //bitamp = 출력될 비트맵 데이터
-    public RhythmJudge(Bitmap bitmap, GameState gs) {
+    public RhythmJudge(Bitmap bitmap) {
         //애니메이션 정보설정
         super(bitmap);
         this.InitSpriteData(82, 274, 1, 1);
         //위치 세팅
         setPosition(note_x, note_y);
         //GameState설정
-        this.gs = gs;
     }
 
     //Move
@@ -43,7 +39,7 @@ public class RhythmJudge extends SpriteAnimation {
         //170위로 올라가면 파괴
         Move(0, -note_speed);
         if(note_y < 175) {
-            gs.removeJudge(this);
+            ObjectManager.removeJudge(this);
         }
     }
 }

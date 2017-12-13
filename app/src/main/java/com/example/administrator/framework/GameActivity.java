@@ -3,7 +3,6 @@ package com.example.administrator.framework;
 import android.app.Activity;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.WindowManager;
 
 import com.example.administrator.networks.ClientWork;
@@ -38,7 +37,6 @@ public class GameActivity extends Activity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-
         // TODO 네트워크
         myName = getIntent().getStringExtra("myName");
         myIP = getIntent().getStringExtra("myIP");
@@ -53,7 +51,7 @@ public class GameActivity extends Activity {
             myPlayerNum = 0;
         } else {
             try {
-                Thread.sleep(10);
+                Thread.sleep(1000);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -62,15 +60,13 @@ public class GameActivity extends Activity {
         }
 
 
-
         //디스플레이의 해상도를 구함
         DisplayMetrics dm = getApplicationContext().getResources().getDisplayMetrics();
         int width = dm.widthPixels;
         size = (double)width/1920.0;
 
-        setContentView(gameView);Log.d("check", "content set");
-
-
+        gameView = new GameView(this);
+        setContentView(gameView);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
     }
 

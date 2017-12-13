@@ -84,7 +84,7 @@ public class ServerWork extends Thread {
 
                 if(timeCheck_bullet > 60) {
                     int angle = random.nextInt(360);
-                    String bulletData = "BulletMake " + 90 + " " + 1240 + " " + 540;
+                    String bulletData = "BulletMake " + angle + " " + 1240 + " " + 540;
                     all_Write(bulletData);
                     timeCheck_bullet = 0;
                 }

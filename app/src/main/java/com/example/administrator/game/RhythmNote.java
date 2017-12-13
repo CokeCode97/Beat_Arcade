@@ -10,14 +10,14 @@ import com.example.administrator.framework.SpriteAnimation;
 
 //리듬게임의 노트를 그려주는 객체
 public class RhythmNote extends SpriteAnimation {
-    GameState gs;
-    int note_x = 16, note_y = 0, noteNum;
-    float note_speed = 30f;
+    //노트의 좌표와 번호 그리고 속도
+    private int note_x = 16, note_y = 0, noteNum;
+    private float note_speed = 30f;
 
 
     //생성시 노트넘버롸 GameState를 받아옴
     //noteNum = 노트라인번호
-    public RhythmNote(Bitmap bitmap, int noteNum, GameState gs) {
+    public RhythmNote(Bitmap bitmap, int noteNum) {
         //애니메이션 정보설정
         super(bitmap);
         this.InitSpriteData(22, 150, 1, 1);
@@ -26,7 +26,6 @@ public class RhythmNote extends SpriteAnimation {
         this.noteNum = noteNum;
         setNote();
         //GameState세팅
-        this.gs = gs;
     }
 
     //노트번호에 맞게 위치를 지정
@@ -41,8 +40,8 @@ public class RhythmNote extends SpriteAnimation {
         this.note_x += x;
         this.note_y += y;
         if(note_y > 930) {
-            gs.makeJudge(0);
-            gs.removeNote(this);
+            ObjectManager.makeJudge(0);
+            ObjectManager.removeNote(this);
         }
         this.setPosition(note_x, note_y);
     }
@@ -72,13 +71,13 @@ public class RhythmNote extends SpriteAnimation {
                 }
 
                 //최종적으로 합산된 판정값을 가지고 판정출력객체를 생성
-                gs.makeJudge(judge_point);
+                ObjectManager.makeJudge(judge_point);
 
                 //콤보매니저 호출
-                gs.rhythmCombo.comboManager();
+                GameState.rhythmCombo.comboManager();
 
                 //이후 노트를 삭제
-                gs.note_Vector.remove(note_num);
+                ObjectManager.removeNote(this);
                 return;
             }
         }
