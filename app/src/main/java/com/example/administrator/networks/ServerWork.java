@@ -183,13 +183,12 @@ public class ServerWork extends Thread {
             switch (tag) {
                 //플레이어가 준비됨
                 case "Ready" : {
-                    if(!allready_Check) {
-                        playerReady_Check[player_Num] = true;
-                        if (playerReady_Check[0] && playerReady_Check[1]) {
-                            all_Write("AllReady");
-                            allready_Check = true;
-                        }
+                    playerReady_Check[player_Num] = true;
+                    if (playerReady_Check[0] && playerReady_Check[1] && !allready_Check ) {
+                        all_Write("AllReady");
+                        allready_Check = true;
                     }
+
                     break;
                 }
                 //클라이언트로 부터 지속적으로 받아오는 캐릭터의 무브체크와 무브각도
@@ -235,7 +234,6 @@ public class ServerWork extends Thread {
                             break;
                         }
                     }
-                    //int collider_Index = Integer.parseInt(stringTokenizer.nextToken());
                     break;
                 }
             }
