@@ -12,8 +12,8 @@ import com.example.administrator.framework.SpriteAnimation;
 //3번 버튼을 그려주는 객체
 public class RhythmBackGroundBottom3 extends Graphic {
     public RhythmBackGroundBottom3 () {
-        super((AppManager.getInstance().getBitmap(R.drawable.background_bottom_3)));
-        this.InitSpriteData(250, 174, 1);
+        super((AppManager.getInstance().getBitmap(R.drawable.newbackground_bottom_3)));
+        this.InitSpriteData(250, 166, 1);
         setPosition(326, 830);
     }
 }

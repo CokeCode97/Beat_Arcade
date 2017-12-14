@@ -15,7 +15,10 @@ import java.util.Vector;
  */
 
 public class Player extends ShootingObject {
-    static int width = 98, height = 86; //플레이어의 크기
+    static int width = 100, height = 100; //플레이어의 크기
+    public int getWidth() { return width; }
+    public int getHeight() { return height; }
+
     float speed_Ori = 12f;              //플레이어의 속도
     float speed_Pre = 12f;
 
@@ -39,19 +42,28 @@ public class Player extends ShootingObject {
     //충돌박스
     Rect rect_collision;
 
+    int player_Num;
+
     //슬로우 체크시간
     long slow_Time;
 
 
     //플레이어의 생성자
     //gamestate = 게임스테이트를 가져옴
-    public Player() {
+    public Player(Bitmap bitmap, int player_Num) {
         //애니메이션 정보설정
-        super((AppManager.getInstance().getBitmap(R.drawable.mob_sprite)), width, height);
-        this.InitSpriteData(height, width, 8, 4);
-        //게임스테이트 세팅
-        //몹 위치 세팅
-        this.setPosition(710, 540);
+        super(bitmap, width, height);
+
+        this.InitSpriteData(height, width, 1, 1);
+
+        this.player_Num = player_Num;
+
+        //플레이어 위치 세팅
+        if(player_Num == 0) {
+            this.setPosition(710, 470);
+        } else {
+            this.setPosition(1600, 470);
+        }
         //충돌박스
         rect_collision = new Rect(getX(), getY(), getX()+width, getY()+height);
     }
@@ -63,7 +75,6 @@ public class Player extends ShootingObject {
     public void Update(long GameTime) {
         //상위객체인 스프라이트 이미지의 업데이트를 작동시킴
         super.Update(GameTime);
-
 
         //dpad로 조작중이면 무브가 동작
         if(move_Check) {
@@ -107,7 +118,6 @@ public class Player extends ShootingObject {
         }
         //체력상황에 따라 체력바를 조절
         ObjectManager.hp_Red_Vector.get(GameState.player_Vector.indexOf(this)).hp_Update(HP_Pre/HP_Max);
-        Log.d("check", "hp_Update" + " " +GameState.player_Vector.indexOf(this));
     }
 
 
@@ -197,9 +207,15 @@ public class Player extends ShootingObject {
     ///////////////////////////////////////////////////////////////////
 
     //TODO 레이저를 생성함
-    //bitmap = 이미지, time_now = 객체가 생성된 시간
-    public void make_Laser(Bitmap bitmap, long time_Make, int combo) {
-        laser_Vector.add(new Laser(bitmap,this, time_Make, combo));
+    //time_make = 객체가 생성된 시간, combo = 만들어질때 콤보수
+    public void make_Laser( long time_Make, int combo) {
+        //플레이어에 따라 다른 레이저 생성
+        if(player_Num == 0) {
+            laser_Vector.add(new Laser(GameState.laser_Bitmap[player_Num], this, time_Make, combo, 700, 100));
+        } else {
+            laser_Vector.add(new Laser(GameState.laser_Bitmap[player_Num], this, time_Make, combo, 100, 700));
+        }
+
     }
 
     //TODO 레이저를 지움

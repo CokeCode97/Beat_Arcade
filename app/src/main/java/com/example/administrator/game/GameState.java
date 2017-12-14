@@ -41,12 +41,16 @@ public class GameState extends Thread implements IState {
     //리듬콤보글자를 출력하는 객체
     public static RhythmCombo rhythmCombo;
 
+    public static RhythmeEffect[] rhythmeEffect = new RhythmeEffect[3];
+
     //비트맵 데이터
     public static Bitmap[] judge_Bitmap = new Bitmap[5];
-    public static Bitmap note_Bitmap;
+    public static Bitmap[] note_Bitmap = new Bitmap[3];
+    public static Bitmap[] effect_Bitmap = new Bitmap[3];
+    public static Bitmap[] player_Bitmap = new Bitmap[2];
+    public static Bitmap[] laser_Bitmap = new Bitmap[2];
     public static Bitmap combo_Bitmap;
     public static Bitmap comboNumber_Bitmap;
-    public static Bitmap laser_Bitmap;
     public static Bitmap bullet_Bitmap;
 
 
@@ -118,18 +122,26 @@ public class GameState extends Thread implements IState {
         judge_Bitmap[2] = AppManager.getInstance().getBitmap(R.drawable.bad);
         judge_Bitmap[3] = AppManager.getInstance().getBitmap(R.drawable.good);
         judge_Bitmap[4] = AppManager.getInstance().getBitmap(R.drawable.perfect);
-        note_Bitmap = AppManager.getInstance().getBitmap(R.drawable.note);
+        note_Bitmap[0] = AppManager.getInstance().getBitmap(R.drawable.note1);
+        note_Bitmap[1] = AppManager.getInstance().getBitmap(R.drawable.note2);
+        note_Bitmap[2] = AppManager.getInstance().getBitmap(R.drawable.note3);
+        effect_Bitmap[0] = AppManager.getInstance().getBitmap(R.drawable.rhythme_effect1);
+        effect_Bitmap[1] = AppManager.getInstance().getBitmap(R.drawable.rhythme_effect2);
+        effect_Bitmap[2] = AppManager.getInstance().getBitmap(R.drawable.rhythme_effect3);
+        player_Bitmap[0] = AppManager.getInstance().getBitmap(R.drawable.player1);
+        player_Bitmap[1] = AppManager.getInstance().getBitmap(R.drawable.player2);
+        laser_Bitmap[0] = AppManager.getInstance().getBitmap(R.drawable.laser_sprite);
+        laser_Bitmap[1] = AppManager.getInstance().getBitmap(R.drawable.laser_sprite2);
         combo_Bitmap = AppManager.getInstance().getBitmap(R.drawable.combo);
         comboNumber_Bitmap = AppManager.getInstance().getBitmap(R.drawable.number_sprite);
-        laser_Bitmap = AppManager.getInstance().getBitmap(R.drawable.laser);
         bullet_Bitmap = AppManager.getInstance().getBitmap(R.drawable.bullet);
 
         //리듬콤보를 관리 출력할 리듬콤보객체를 생성
         rhythmCombo = new RhythmCombo(combo_Bitmap);
 
         //플레이어 객체를 두개 생성함
-        player_Vector.add(new Player());
-        player_Vector.add(new Player());
+        player_Vector.add(new Player(player_Bitmap[0], 0));
+        player_Vector.add(new Player(player_Bitmap[1], 1));
 
         //체력바 (배경)을 생성함
         ObjectManager.hp_Black_Vector.add(new HP_Black(0));
@@ -138,13 +150,16 @@ public class GameState extends Thread implements IState {
         //체력바 (체력표시)를 생성함
         ObjectManager.hp_Red_Vector.add(new HP_Red(0));
         ObjectManager.hp_Red_Vector.add(new HP_Red(700));
+
+        rhythmeEffect[0] = new RhythmeEffect(effect_Bitmap[0], 0);
+        rhythmeEffect[1] = new RhythmeEffect(effect_Bitmap[1],1);
+        rhythmeEffect[2] = new RhythmeEffect(effect_Bitmap[2],2);
     }
 
 
     //시작될때 여러 비트맵 데이터나 객체들을 메모리에 올림
     @Override
     public void Init() {
-
     }
 
     @Override
@@ -162,6 +177,11 @@ public class GameState extends Thread implements IState {
         //note_Vector 안에 있는 모든 객체의 Update를 호출
         for (int i = 0; i < ObjectManager.note_Vector.size(); i++) {
             ObjectManager.note_Vector.get(i).Update(GameTime);
+        }
+
+        //리듬이펙트 안에 있는 모든 객체의 Update를 호출
+        for (int i = 0; i < rhythmeEffect.length; i++) {
+            rhythmeEffect[i].Update(GameTime);
         }
 
         //judge_Vector 안에 있는 모든 객체의 Update를 호출
@@ -212,6 +232,11 @@ public class GameState extends Thread implements IState {
         //nv벡터 안에 있는 모든 객체를 그려줌
         for (int i = 0; i < ObjectManager.note_Vector.size(); i++) {
             ObjectManager.note_Vector.get(i).Draw(canvas);
+        }
+
+        //리듬이펙트 안에 있는 모든 객체의 Update를 호출
+        for (int i = 0; i < rhythmeEffect.length; i++) {
+            rhythmeEffect[i].Draw(canvas);
         }
 
         //jv벡터 안에 있는 모든 객체를 그려줌
@@ -322,6 +347,7 @@ public class GameState extends Thread implements IState {
                 }
             }
             //그 노트를 판정함
+            rhythmeEffect[note_line].setNote(System.currentTimeMillis());
             ObjectManager.note_Vector.get(note_i).noteJudge(note_i, note_line);
         }
 

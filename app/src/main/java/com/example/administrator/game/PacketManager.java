@@ -68,7 +68,7 @@ public class PacketManager {
                 case "Attack": {
                     int player_Num = Integer.parseInt(stringTokenizer.nextToken());
                     int combo = Integer.parseInt(stringTokenizer.nextToken());
-                    GameState.player_Vector.get(player_Num).make_Laser(GameState.laser_Bitmap, System.currentTimeMillis(), combo);
+                    GameState.player_Vector.get(player_Num).make_Laser(System.currentTimeMillis(), combo);
 
                     break;
                 }

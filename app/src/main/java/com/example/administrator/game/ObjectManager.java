@@ -25,9 +25,9 @@ public class ObjectManager {
         //500ms마다 노트를 생성
         if(System.currentTimeMillis() - Last >= 500) {
             Last = System.currentTimeMillis();
-
+            int rhythme_num = random.nextInt(3);
             //랜덤으로 노트번호를 0~2까지 정하여 생성한후 노트를 nv 추가
-            RhythmNote note = new RhythmNote(GameState.note_Bitmap, random.nextInt(3));
+            RhythmNote note = new RhythmNote(GameState.note_Bitmap[rhythme_num], rhythme_num);
             note_Vector.add(note);
         }
     }
@@ -50,6 +50,8 @@ public class ObjectManager {
         judge_Vector.add(judge);
     }
 
+    //총알을 만듦
+    //angle = 총알이 날아가는 각도, x,y = 총알이 생성되는 좌표
     public static void makeBullet(double angle, int x, int y){
         bullet_Vector.add(new Bullet(GameState.bullet_Bitmap, angle, x, y));
     }

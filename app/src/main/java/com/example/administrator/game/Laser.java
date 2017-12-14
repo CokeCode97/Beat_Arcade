@@ -11,32 +11,51 @@ import com.example.administrator.networks.ClientWork;
  */
 
 public class Laser extends SpriteAnimation {
-    private int width= 510, height = 86, combo = 0; //이것의 크기와 생성될때의 콤보
+    private int width, height, combo = 0;          //이것의 크기와 생성될때의 콤보
     private long time_Make;                         //이것이 생성된 시간
-    private Player player;                          //이것을 생성한 플레이어
-    private boolean hit_Check = false;              //공격이 중복되지 않도록 공격을 했는지 안했는지 체크해줄 변수
+    private Player player;                           //이것을 생성한 플레이어
+    private boolean hit_Check = false;             //공격이 중복되지 않도록 공격을 했는지 안했는지 체크해줄 변수
 
     private Rect rect_collision;                    //충돌박스
 
     //Laser의 생성자
-    //bitmap = 출력할 이미지, player = 이것을 생성한 플레이어 객체, makeTime = 이것을 만든 시간, combo = 이것을 만들때의 콤보
-    public Laser(Bitmap bitmap, Player player, long makeTime, int combo) {
+    //bitmap = 출력할 이미지, player = 이것을 생성한 플레이어 객체, makeTime = 이것을 만든 시간, combo = 이것을 만들때의 콤보, width, height = 크기
+    public Laser(Bitmap bitmap, Player player, long makeTime, int combo, int width, int height) {
         super(bitmap);
-        this.InitSpriteData(height, width, 1, 1);
+
+        //크기설정
+        this.width = width;
+        this.height = height;
+
+        //그리는 영역 설정
+        this.InitSpriteData(height, width, 8, 5);
+
+        //만들어진 시간 설정
         this.time_Make = makeTime;
+
+        //이것을 생성한 플레이어 설정
         this.player = player;
+
+        //생성될때 콤보수 성정
         this.combo = combo;
+
+        //충돌박스 설정
         rect_collision = new Rect(getX(), getY(), getX()+width, getY()+height);
     }
 
 
+    //TODO 매 프레임마다 할일을 진행
     public void Update(long Gametime) {
         //생성된지 0.5초가 지나면 사라지며 그전까지는 플레이어를 따라다니면서 적플레이어와의 충돌검사를 요청
         if(Gametime - time_Make > 500) {
             player.remove_Laser(this);
         } else {
-            this.setPosition(player.getX()+49-255, player.getY());
+            super.Update(Gametime);
+            //생성한 캐릭터를 따라다니도록 설정
+            this.setPosition(player.getX() + (int)(player.getWidth()*0.5) - (int)(width*0.5), player.getY() + (int)(player.getHeight()*0.5) - (int)(height*0.5));
+            //충돌박스를 업데이트
             rect_collision = new Rect(getX(), getY(), getX()+width, getY()+height);
+            //충돌검사 요청
             if(GameState.player_Vector.get(GameState.getPlayer_Num()) == player) {
                 collision();
             }
