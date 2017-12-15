@@ -26,8 +26,8 @@ public class Player extends ShootingObject {
     int t2_x, t2_y, dpadCircle_x, dpadCircle_y;
 
     //체력
-    double HP_Max = 50;
-    double HP_Pre = 50;
+    double HP_Max = 500;
+    double HP_Pre = 500;
 
     //각도, 중심과 터치좌표의 거리
     double angle, dx, dy;
@@ -46,6 +46,7 @@ public class Player extends ShootingObject {
 
     //슬로우 체크시간
     long slow_Time;
+    long slowEffect_Time;
 
 
     //플레이어의 생성자
@@ -89,11 +90,17 @@ public class Player extends ShootingObject {
                 //속도를 원래 속도로 변경하고 슬로우를 해제
                 speed_Pre = speed_Ori;
                 slow_Check = false;
+            } else {
+                //슬로우 중일때 매 0.2초마다 슬로우 이펙트 생성
+                if(GameTime - slowEffect_Time >= 200) {
+                    ObjectManager.makeSlow_Effect(this.getX(), this.getY());
+                    slowEffect_Time = GameTime;
+                }
             }
         }
 
         //이 플레이어 객체가 플레이어 본인의 객체라면 충돌판정을 실행
-        if(GameState.getPlayer_Num() == GameState.player_Vector.indexOf(this))
+        if(GameState.getPlayer_Num() == ObjectManager.player_Vector.indexOf(this))
             collision();
     }
 
@@ -109,15 +116,18 @@ public class Player extends ShootingObject {
 
     //TODO 공격을 맞았을때 그에맞게 체력을 조절하고 체력상태바를 변경함
     //combo = 해당 레이저가 발생될떄 가지고 있던 콤보
-    public void hit(int combo) {
+    public void hit(double damage) {
         //콤보만큼 체력을 감소시킴
-        HP_Pre -= combo;
+        HP_Pre -= damage;
         //체력이 0이되면 제거함
         if(HP_Pre <= 0) {
-            GameState.player_Vector.remove(this);
+            ObjectManager.player_Vector.remove(this);
         }
         //체력상황에 따라 체력바를 조절
-        ObjectManager.hp_Red_Vector.get(GameState.player_Vector.indexOf(this)).hp_Update(HP_Pre/HP_Max);
+        ObjectManager.hp_Red_Vector.get(ObjectManager.player_Vector.indexOf(this)).hp_Update(HP_Pre/HP_Max);
+        if(HP_Max/damage <= 10) {
+            ObjectManager.hp_Black_Vector.get(ObjectManager.player_Vector.indexOf(this)).setShake(System.currentTimeMillis());
+        }
     }
 
 
@@ -129,6 +139,7 @@ public class Player extends ShootingObject {
             this.slow_Check = true;
             this.speed_Pre = this.speed_Pre*slow_Ratio;
             this.slow_Time = slow_Time;
+            this.slowEffect_Time = slow_Time - 200;
         }
     }
 
@@ -137,7 +148,7 @@ public class Player extends ShootingObject {
     public void collision() {
         for(int i = 0; i < ObjectManager.bullet_Vector.size(); i++) {
             if(CollisionManager.collision_Check(ObjectManager.bullet_Vector.get(i).getRect_collision(), this.rect_collision)) {
-                ClientWork.write("Collision " + GameState.player_Vector.indexOf(this) + " " + "Bullet " + i);
+                ClientWork.write("Collision " + ObjectManager.player_Vector.indexOf(this) + " " + "Bullet " + i);
             }
         }
 
@@ -208,12 +219,12 @@ public class Player extends ShootingObject {
 
     //TODO 레이저를 생성함
     //time_make = 객체가 생성된 시간, combo = 만들어질때 콤보수
-    public void make_Laser( long time_Make, int combo) {
+    public void make_Laser( long time_Make, double damage) {
         //플레이어에 따라 다른 레이저 생성
         if(player_Num == 0) {
-            laser_Vector.add(new Laser(GameState.laser_Bitmap[player_Num], this, time_Make, combo, 700, 100));
+            laser_Vector.add(new Laser(GameState.laser_Bitmap[player_Num], this, time_Make, damage, 700, 100));
         } else {
-            laser_Vector.add(new Laser(GameState.laser_Bitmap[player_Num], this, time_Make, combo, 100, 700));
+            laser_Vector.add(new Laser(GameState.laser_Bitmap[player_Num], this, time_Make, damage, 100, 700));
         }
 
     }

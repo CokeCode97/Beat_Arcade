@@ -9,6 +9,7 @@ import android.view.SurfaceView;
 
 import com.example.administrator.game.GameState;
 import com.example.administrator.game.LodingState;
+import com.example.administrator.game.UpdateManager;
 
 /**
  * Created by Administrator on 2017-11-27.
@@ -20,6 +21,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
     private static IState istate;
     private static GameState gameState;
     private static Context context;
+    public static UpdateManager updateManager;
 
     //게임뷰의 생성자
     public GameView(Context context) {
@@ -38,10 +40,10 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         getHolder().addCallback(this);
         //게임뷰 스레드에 홀더와 게임뷰를 넘겨줌
         gameview_thread = new GameViewThread(getHolder(), this);
+        updateManager = new UpdateManager();
 
         LodingState lodingState = new LodingState();
         changeState(lodingState);
-
 
     }
 
@@ -51,15 +53,8 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         //화면을 검게 칠함
         //canvas.drawColor(Color.BLACK);
         //istate 랜더를 불러들여 istate
-        gameState.setCheck(true);
+        updateManager.setCheck(true);
         istate.Render(canvas);
-    }
-
-
-    //화면의 업데이트를 적용해줄 업데이트 함수
-    public void Update() {
-        //istate의 업데이트를 지속적으로 호출하여 istate를 상속받은 모든 클래스들이 update함수를 활용할수 있게 해줌
-        //istate.Update();
     }
 
 
@@ -72,13 +67,13 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         //새 istate를 적용시킴
         istate.Init();
         GameView.istate = istate;
+        updateManager.changeState(istate);
     }
 
     //게임뷰의 상태를 게임스테이트로 바꿔줌
     public static void changeGameState() {
         gameState = new GameState(context);
         changeState(gameState);
-        gameState.start();
     }
 
 
@@ -89,6 +84,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         gameview_thread.setRunnig(true);
         //스레드 시작
         gameview_thread.start();
+        updateManager.start();
     }
 
 

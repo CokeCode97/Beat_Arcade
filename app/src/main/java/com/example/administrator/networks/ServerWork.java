@@ -2,6 +2,8 @@ package com.example.administrator.networks;
 
 import android.util.Log;
 
+import com.example.administrator.game.BulletPatternManager;
+
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.InputStreamReader;
@@ -21,9 +23,9 @@ public class ServerWork extends Thread {
     Random random = new Random();
     private boolean flag = true;
 
-    private String myName;
+    private static String myName;
     private String myIP;
-    private String opponentName;
+    private static String opponentName;
     private String opponentIP;
     private int gamePort;
 
@@ -33,7 +35,7 @@ public class ServerWork extends Thread {
     private boolean allready_Check = false;
     private boolean start_Check = false;
 
-    private HashMap<String, ServerThread> serverMap;
+    private static HashMap<String, ServerThread> serverMap;
     private Vector<Player> player_Vector = new Vector<>();
     class Player {
         int x;
@@ -95,10 +97,9 @@ public class ServerWork extends Thread {
                     String sendData = "PlayerData " + 0 + " " + player_Vector.get(0).move_Check + " " + player_Vector.get(0).angle + " " + "PlayerData " + 1 + " " + player_Vector.get(1).move_Check + " " + player_Vector.get(1).angle;
                     all_Write(sendData);
 
-                    if (timeCheck_bullet > 60) {
+                    if (timeCheck_bullet > 300) {
                         int angle = random.nextInt(360);
-                        String bulletData = "BulletMake " + angle + " " + 1240 + " " + 540;
-                        all_Write(bulletData);
+                        BulletPatternManager.makeBarrage();
                         timeCheck_bullet = 0;
                     }
                     timeCheck_bullet++;
@@ -113,7 +114,7 @@ public class ServerWork extends Thread {
     }
 
     //연결된 클라이언트 전체에 메세지를 발송
-    public void all_Write(String sendData) {
+    public static void all_Write(String sendData) {
         serverMap.get(myName).write(sendData + "\n");
         serverMap.get(opponentName).write(sendData + "\n");
     }
@@ -193,8 +194,6 @@ public class ServerWork extends Thread {
                 }
                 //클라이언트로 부터 지속적으로 받아오는 캐릭터의 무브체크와 무브각도
                 case "PlayerData" : {
-                    /*player_Vector.get(player_Num).x = Integer.parseInt(stringTokenizer.nextToken());
-                    player_Vector.get(player_Num).y = Integer.parseInt(stringTokenizer.nextToken());*/
                     player_Vector.get(player_Num).move_Check = Boolean.parseBoolean(stringTokenizer.nextToken());
                     player_Vector.get(player_Num).angle = Double.parseDouble(stringTokenizer.nextToken());
                     break;
@@ -213,8 +212,8 @@ public class ServerWork extends Thread {
 
                 //노트를 맞출때 호출되며 공격명령을 전달
                 case "Attack" : {
-                    int combo = Integer.parseInt(stringTokenizer.nextToken());
-                    all_Write("Attack " + player_Num + " " + combo);
+                    Double damage = Double.parseDouble(stringTokenizer.nextToken());
+                    all_Write("Attack " + player_Num + " " + damage);
                     break;
                 }
 
@@ -224,8 +223,8 @@ public class ServerWork extends Thread {
                     String collider_Object = stringTokenizer.nextToken();
                     switch (collider_Object) {
                         case "Laser" : {
-                            int combo = Integer.parseInt(stringTokenizer.nextToken());
-                            all_Write("Collsion " + collider_Player + " " + collider_Object + " " + combo);
+                            Double damage = Double.parseDouble(stringTokenizer.nextToken());
+                            all_Write("Collsion " + collider_Player + " " + collider_Object + " " + damage);
                             break;
                         }
                         case "Bullet" : {

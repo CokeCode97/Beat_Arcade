@@ -14,6 +14,6 @@ public class RhythmBackGroundBottom2 extends Graphic {
     public RhythmBackGroundBottom2 () {
         super((AppManager.getInstance().getBitmap(R.drawable.newbackground_bottom_2)));
         this.InitSpriteData(250, 164, 1);
-        setPosition(167, 830);
+        setPosition(170, 830);
     }
 }

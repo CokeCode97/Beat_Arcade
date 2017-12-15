@@ -33,8 +33,8 @@ public class PacketManager {
 
                     //자신의 캐릭터의 데이터가 아닐경우에만 해당 번호의 캐릭터를 움직임
                     if (GameState.getPlayer_Num() != player_Num) {
-                        GameState.player_Vector.get(player_Num).setMove_Check(Boolean.parseBoolean(stringTokenizer.nextToken()));
-                        GameState.player_Vector.get(player_Num).setAngle(Double.parseDouble(stringTokenizer.nextToken()));
+                        ObjectManager.player_Vector.get(player_Num).setMove_Check(Boolean.parseBoolean(stringTokenizer.nextToken()));
+                        ObjectManager.player_Vector.get(player_Num).setAngle(Double.parseDouble(stringTokenizer.nextToken()));
                     } else {
                         stringTokenizer.nextToken();
                         stringTokenizer.nextToken();
@@ -47,9 +47,9 @@ public class PacketManager {
                 case "PlayerDataXY": {
                     //플레이어들을 받아온 좌표값으로 이동시킴
                     int player_Num = Integer.parseInt(stringTokenizer.nextToken());
-                    GameState.player_Vector.get(player_Num).x = Integer.parseInt(stringTokenizer.nextToken());
-                    GameState.player_Vector.get(player_Num).y = Integer.parseInt(stringTokenizer.nextToken());
-                    GameState.player_Vector.get(player_Num).setPosition(GameState.player_Vector.get(player_Num).x, GameState.player_Vector.get(player_Num).y);
+                    ObjectManager.player_Vector.get(player_Num).shooting_X = Integer.parseInt(stringTokenizer.nextToken());
+                    ObjectManager.player_Vector.get(player_Num).shooting_Y = Integer.parseInt(stringTokenizer.nextToken());
+                    ObjectManager.player_Vector.get(player_Num).setPosition((int)(ObjectManager.player_Vector.get(player_Num).shooting_X), (int)(ObjectManager.player_Vector.get(player_Num).shooting_Y));
 
                     break;
                 }
@@ -67,8 +67,8 @@ public class PacketManager {
                 //공격정보를 수신하여 그에 맞게 공격명령
                 case "Attack": {
                     int player_Num = Integer.parseInt(stringTokenizer.nextToken());
-                    int combo = Integer.parseInt(stringTokenizer.nextToken());
-                    GameState.player_Vector.get(player_Num).make_Laser(System.currentTimeMillis(), combo);
+                    Double damage = Double.parseDouble(stringTokenizer.nextToken());
+                    ObjectManager.player_Vector.get(player_Num).make_Laser(System.currentTimeMillis(), damage);
 
                     break;
                 }
@@ -81,19 +81,19 @@ public class PacketManager {
                     switch (collider_Object) {
                         //레이저와 충돌했을때
                         case "Laser": {
-                            int combo = Integer.parseInt(stringTokenizer.nextToken());
+                            Double damage = Double.parseDouble(stringTokenizer.nextToken());
                             //플레이어에게 콤보에 따른 데미지를 줌
-                            GameState.player_Vector.get(collider_Player).hit(combo);
+                            ObjectManager.player_Vector.get(collider_Player).hit(damage);
 
                             break;
                         }
                         case "Bullet": {
                             int collider_Index = Integer.parseInt(stringTokenizer.nextToken());
                             //플레이어에게 5의 데미지를 주고
-                            GameState.player_Vector.get(collider_Player).hit(5);
+                            ObjectManager.player_Vector.get(collider_Player).hit(5);
 
                             //50%의 이동속도 감소효과 디버프를 검
-                            GameState.player_Vector.get(collider_Player).setSlow(0.5f, System.currentTimeMillis());
+                            ObjectManager.player_Vector.get(collider_Player).setSlow(0.5f, System.currentTimeMillis());
                             //만약 불릿벡터 사이즈가 콜리더인덱스보다 크면 콜리더 인덱스의 객체를 파괴함
                             if (ObjectManager.bullet_Vector.size() > collider_Index)
                                 ObjectManager.bullet_Vector.remove(collider_Index);

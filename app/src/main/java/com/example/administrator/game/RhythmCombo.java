@@ -11,6 +11,7 @@ import com.example.administrator.networks.ClientWork;
 
 public class RhythmCombo extends SpriteAnimation{
     private int combo;
+    private int judge_Point = 0;
 
     public RhythmCombo (Bitmap bitmap) {
         super(bitmap);
@@ -56,17 +57,20 @@ public class RhythmCombo extends SpriteAnimation{
     }
 
     //TODO 콤보를 1추가하고 콤보가 5의 배수일때 마다 공격메세지를 보냄
-    public void comboup() {
+    public void comboup(int judge_Point) {
         combo++;
+        this.judge_Point += judge_Point;
         if(combo % 5 == 0 && combo != 0) {
             //서버에 공격했다고 메시지 전송
-            ClientWork.write("Attack " + combo);
+            ClientWork.write("Attack " + this.judge_Point * (1 + (combo/5)*0.2));
+            this.judge_Point = 0;
         }
     }
 
     //TODO 콤보를 리셋함
     public void comboReset() {
         combo = 0;
+        this.judge_Point = 0;
         ObjectManager.comboNumber_Vector .clear();
     }
 

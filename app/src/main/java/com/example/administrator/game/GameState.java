@@ -21,27 +21,8 @@ import java.util.Vector;
  * Created by Administrator on 2017-11-28.
  */
 
-public class GameState extends Thread implements IState {
+public class GameState implements IState {
     private GameActivity gameActivity;
-
-
-    public static Vector<Player> player_Vector = new Vector<>();
-
-    //게임 배경을 그려주는 객체들
-    private RhythmBackGourndTop rhythmBackGourndTop = new RhythmBackGourndTop();
-    private RhythmBackGroundBottom1 rhythmBackGroundBottom1 = new RhythmBackGroundBottom1();
-    private RhythmBackGroundBottom2 rhythmBackGroundBottom2 = new RhythmBackGroundBottom2();
-    private RhythmBackGroundBottom3 rhythmBackGroundBottom3 = new RhythmBackGroundBottom3();
-    private ShootingBackground shootingBackground = new ShootingBackground();
-
-    //Dpad를 구성하는 원들
-    private Circle dpad_Circle = new Circle();
-    private MiniCircle dpad_MiniCircle = new MiniCircle();
-
-    //리듬콤보글자를 출력하는 객체
-    public static RhythmCombo rhythmCombo;
-
-    public static RhythmeEffect[] rhythmeEffect = new RhythmeEffect[3];
 
     //비트맵 데이터
     public static Bitmap[] judge_Bitmap = new Bitmap[5];
@@ -49,6 +30,7 @@ public class GameState extends Thread implements IState {
     public static Bitmap[] effect_Bitmap = new Bitmap[3];
     public static Bitmap[] player_Bitmap = new Bitmap[2];
     public static Bitmap[] laser_Bitmap = new Bitmap[2];
+    public static Bitmap slow_Bitmap;
     public static Bitmap combo_Bitmap;
     public static Bitmap comboNumber_Bitmap;
     public static Bitmap bullet_Bitmap;
@@ -74,33 +56,6 @@ public class GameState extends Thread implements IState {
         return enemy_Num;
     }
 
-
-    //업데이트할지 안할지를 체크하는 변수
-    private boolean update_Check = true;
-
-
-    @Override
-    public void run() {
-        int timeCheck_XY = 0;
-        while (true) {
-            if (update_Check) {
-                this.Update();
-
-                ClientWork.write("PlayerData " + player_Vector.get(player_Num).getMove_Check() + " " + player_Vector.get(player_Num).getAngle());
-                if (timeCheck_XY > 200) {
-                    ClientWork.write("PlayerDataXY " + player_Vector.get(player_Num).getX() + " " + player_Vector.get(player_Num).getY());
-
-                    timeCheck_XY = 0;
-                }
-                timeCheck_XY++;
-                update_Check = false;
-            }
-        }
-    }
-
-    public void setCheck(boolean update_Check) {
-        this.update_Check = update_Check;
-    }
 
     public GameState(Context context) {
         //게임액티비티를 저장
@@ -132,28 +87,33 @@ public class GameState extends Thread implements IState {
         player_Bitmap[1] = AppManager.getInstance().getBitmap(R.drawable.player2);
         laser_Bitmap[0] = AppManager.getInstance().getBitmap(R.drawable.laser_sprite);
         laser_Bitmap[1] = AppManager.getInstance().getBitmap(R.drawable.laser_sprite2);
+        slow_Bitmap = AppManager.getInstance().getBitmap(R.drawable.slow_effect);
         combo_Bitmap = AppManager.getInstance().getBitmap(R.drawable.combo);
         comboNumber_Bitmap = AppManager.getInstance().getBitmap(R.drawable.number_sprite);
         bullet_Bitmap = AppManager.getInstance().getBitmap(R.drawable.bullet);
 
         //리듬콤보를 관리 출력할 리듬콤보객체를 생성
-        rhythmCombo = new RhythmCombo(combo_Bitmap);
+        ObjectManager.rhythmCombo = new RhythmCombo(combo_Bitmap);
 
         //플레이어 객체를 두개 생성함
-        player_Vector.add(new Player(player_Bitmap[0], 0));
-        player_Vector.add(new Player(player_Bitmap[1], 1));
+        ObjectManager.player_Vector.add(new Player(player_Bitmap[0], 0));
+        ObjectManager.player_Vector.add(new Player(player_Bitmap[1], 1));
 
         //체력바 (배경)을 생성함
         ObjectManager.hp_Black_Vector.add(new HP_Black(0));
         ObjectManager.hp_Black_Vector.add(new HP_Black(700));
 
         //체력바 (체력표시)를 생성함
-        ObjectManager.hp_Red_Vector.add(new HP_Red(0));
-        ObjectManager.hp_Red_Vector.add(new HP_Red(700));
+        ObjectManager.hp_Red_Vector.add(new HP_Red(ObjectManager.hp_Black_Vector.get(0)));
+        ObjectManager.hp_Red_Vector.add(new HP_Red(ObjectManager.hp_Black_Vector.get(1)));
 
-        rhythmeEffect[0] = new RhythmeEffect(effect_Bitmap[0], 0);
-        rhythmeEffect[1] = new RhythmeEffect(effect_Bitmap[1],1);
-        rhythmeEffect[2] = new RhythmeEffect(effect_Bitmap[2],2);
+        //체력바 (체력표시)를 생성함
+        ObjectManager.hp_Yellow_Vector.add(new HP_Yellow(ObjectManager.hp_Black_Vector.get(0)));
+        ObjectManager.hp_Yellow_Vector.add(new HP_Yellow(ObjectManager.hp_Black_Vector.get(1)));
+
+        ObjectManager.rhythmeEffect[0] = new RhythmeEffect(effect_Bitmap[0], 0);
+        ObjectManager.rhythmeEffect[1] = new RhythmeEffect(effect_Bitmap[1],1);
+        ObjectManager.rhythmeEffect[2] = new RhythmeEffect(effect_Bitmap[2],2);
     }
 
 
@@ -180,8 +140,8 @@ public class GameState extends Thread implements IState {
         }
 
         //리듬이펙트 안에 있는 모든 객체의 Update를 호출
-        for (int i = 0; i < rhythmeEffect.length; i++) {
-            rhythmeEffect[i].Update(GameTime);
+        for (int i = 0; i < ObjectManager.rhythmeEffect.length; i++) {
+            ObjectManager.rhythmeEffect[i].Update(GameTime);
         }
 
         //judge_Vector 안에 있는 모든 객체의 Update를 호출
@@ -189,17 +149,37 @@ public class GameState extends Thread implements IState {
             ObjectManager.judge_Vector.get(i).Update(GameTime);
         }
 
+        //모든 slow 객체의 Update를 호출
+        for (int i = 0; i < ObjectManager.slowEffect_Vector.size(); i++) {
+            ObjectManager.slowEffect_Vector.get(i).Update(GameTime);
+        }
+
         //플레이어와 레이저를 업데이트함
-        for (int i = 0; i < player_Vector.size(); i++) {
-            player_Vector.get(i).Update(GameTime);
-            for (int j = 0; j < player_Vector.get(i).laser_Vector.size(); j++) {
-                player_Vector.get(i).laser_Vector.get(j).Update(GameTime);
+        for (int i = 0; i < ObjectManager.player_Vector.size(); i++) {
+            ObjectManager.player_Vector.get(i).Update(GameTime);
+            for (int j = 0; j < ObjectManager.player_Vector.get(i).laser_Vector.size(); j++) {
+                ObjectManager.player_Vector.get(i).laser_Vector.get(j).Update(GameTime);
             }
         }
 
         //모든 Bullet 객체의 Update를 호출
         for (int i = 0; i < ObjectManager.bullet_Vector.size(); i++) {
             ObjectManager.bullet_Vector.get(i).Update(GameTime);
+        }
+
+        //hp벡터 안에 있는 모든 객체를 그려줌
+        for (int i = 0; i < ObjectManager.hp_Black_Vector.size(); i++) {
+            ObjectManager.hp_Black_Vector.get(i).Update(GameTime);
+        }
+
+        //hp벡터 안에 있는 모든 객체를 그려줌
+        for (int i = 0; i < ObjectManager.hp_Red_Vector.size(); i++) {
+            ObjectManager.hp_Red_Vector.get(i).Update(GameTime);
+        }
+
+        //hp벡터 안에 있는 모든 객체를 그려줌
+        for (int i = 0; i < ObjectManager.hp_Yellow_Vector.size(); i++) {
+            ObjectManager.hp_Yellow_Vector.get(i).Update(GameTime);
         }
 
         //노트를 생성
@@ -211,13 +191,18 @@ public class GameState extends Thread implements IState {
     @Override
     public void Render(Canvas canvas) {
         //슈팅게임의 배경을 그려줌
-        shootingBackground.Draw(canvas);
+        ObjectManager.shootingBackground.Draw(canvas);
+
+        //모든 slow 객체를 드로우
+        for (int i = 0; i < ObjectManager.slowEffect_Vector.size(); i++) {
+            ObjectManager.slowEffect_Vector.get(i).Draw(canvas);
+        }
 
         //플레이어와 레이저를 그림
-        for (int i = 0; i < player_Vector.size(); i++) {
-            player_Vector.get(i).Draw(canvas);
-            for (int j = 0; j < player_Vector.get(i).laser_Vector.size(); j++) {
-                player_Vector.get(i).laser_Vector.get(j).Draw(canvas);
+        for (int i = 0; i < ObjectManager.player_Vector.size(); i++) {
+            ObjectManager.player_Vector.get(i).Draw(canvas);
+            for (int j = 0; j < ObjectManager.player_Vector.get(i).laser_Vector.size(); j++) {
+                ObjectManager.player_Vector.get(i).laser_Vector.get(j).Draw(canvas);
             }
         }
 
@@ -227,7 +212,7 @@ public class GameState extends Thread implements IState {
         }
 
         //노트가 내려오는 부분의 배경을 그려줌
-        rhythmBackGourndTop.Draw(canvas);
+        ObjectManager.rhythmBackGourndTop.Draw(canvas);
 
         //nv벡터 안에 있는 모든 객체를 그려줌
         for (int i = 0; i < ObjectManager.note_Vector.size(); i++) {
@@ -235,8 +220,8 @@ public class GameState extends Thread implements IState {
         }
 
         //리듬이펙트 안에 있는 모든 객체의 Update를 호출
-        for (int i = 0; i < rhythmeEffect.length; i++) {
-            rhythmeEffect[i].Draw(canvas);
+        for (int i = 0; i < ObjectManager.rhythmeEffect.length; i++) {
+            ObjectManager.rhythmeEffect[i].Draw(canvas);
         }
 
         //jv벡터 안에 있는 모든 객체를 그려줌
@@ -245,8 +230,8 @@ public class GameState extends Thread implements IState {
         }
 
         //콤보가 2보다 크면 콤보와 관련된 오브젝트들을 렌더링함
-        if (rhythmCombo.getCombo() > 2) {
-            rhythmCombo.Draw(canvas);
+        if (ObjectManager.rhythmCombo.getCombo() > 2) {
+            ObjectManager.rhythmCombo.Draw(canvas);
             for (int i = 0; i < ObjectManager.comboNumber_Vector.size(); i++) {
                 ObjectManager.comboNumber_Vector.get(i).Draw(canvas);
             }
@@ -257,18 +242,24 @@ public class GameState extends Thread implements IState {
         }
 
         //hp벡터 안에 있는 모든 객체를 그려줌
+        for (int i = 0; i < ObjectManager.hp_Yellow_Vector.size(); i++) {
+            ObjectManager.hp_Yellow_Vector.get(i).Draw(canvas);
+        }
+
+        //hp벡터 안에 있는 모든 객체를 그려줌
         for (int i = 0; i < ObjectManager.hp_Red_Vector.size(); i++) {
             ObjectManager.hp_Red_Vector.get(i).Draw(canvas);
         }
 
+
         //버튼들을 그려줌
-        rhythmBackGroundBottom1.Draw(canvas);
-        rhythmBackGroundBottom2.Draw(canvas);
-        rhythmBackGroundBottom3.Draw(canvas);
+        ObjectManager.rhythmBackGroundBottom1.Draw(canvas);
+        ObjectManager.rhythmBackGroundBottom2.Draw(canvas);
+        ObjectManager.rhythmBackGroundBottom3.Draw(canvas);
 
         //D-Pad를 그려줌
-        dpad_Circle.Draw(canvas);
-        dpad_MiniCircle.Draw(canvas);
+        ObjectManager.dpad_Circle.Draw(canvas);
+        ObjectManager.dpad_MiniCircle.Draw(canvas);
     }
 
 
@@ -295,13 +286,13 @@ public class GameState extends Thread implements IState {
 
 
         //렉트에 D-Pad위치를 넣어줌
-        rt.set(dpad_Circle.getX_R(), dpad_Circle.getY_R(), dpad_Circle.getX_R() + dpad_Circle.getSpriteWidth(), dpad_Circle.getY_R() + dpad_Circle.getSpriteHeight());
+        rt.set(ObjectManager.dpad_Circle.getX_R(), ObjectManager.dpad_Circle.getY_R(), ObjectManager.dpad_Circle.getX_R() + ObjectManager.dpad_Circle.getSpriteWidth(), ObjectManager.dpad_Circle.getY_R() + ObjectManager.dpad_Circle.getSpriteHeight());
         //렉트에 1번 버튼을 넣어줌
-        rt1.set(rhythmBackGroundBottom1.getX_R(), rhythmBackGroundBottom1.getY_R(), rhythmBackGroundBottom1.getX_R() + rhythmBackGroundBottom1.getSpriteWidth(), rhythmBackGroundBottom1.getY_R() + rhythmBackGroundBottom1.getSpriteHeight());
+        rt1.set(ObjectManager.rhythmBackGroundBottom1.getX_R(), ObjectManager.rhythmBackGroundBottom1.getY_R(), ObjectManager.rhythmBackGroundBottom1.getX_R() + ObjectManager.rhythmBackGroundBottom1.getSpriteWidth(), ObjectManager.rhythmBackGroundBottom1.getY_R() + ObjectManager.rhythmBackGroundBottom1.getSpriteHeight());
         //렉트에 2번 버튼을 넣어줌
-        rt2.set(rhythmBackGroundBottom2.getX_R(), rhythmBackGroundBottom2.getY_R(), rhythmBackGroundBottom2.getX_R() + rhythmBackGroundBottom2.getSpriteWidth(), rhythmBackGroundBottom2.getY_R() + rhythmBackGroundBottom2.getSpriteHeight());
+        rt2.set(ObjectManager.rhythmBackGroundBottom2.getX_R(), ObjectManager.rhythmBackGroundBottom2.getY_R(), ObjectManager.rhythmBackGroundBottom2.getX_R() + ObjectManager.rhythmBackGroundBottom2.getSpriteWidth(), ObjectManager.rhythmBackGroundBottom2.getY_R() + ObjectManager.rhythmBackGroundBottom2.getSpriteHeight());
         //렉트에 3번 버튼을 넣어줌
-        rt3.set(rhythmBackGroundBottom3.getX_R(), rhythmBackGroundBottom3.getY_R(), rhythmBackGroundBottom3.getX_R() + rhythmBackGroundBottom3.getSpriteWidth(), rhythmBackGroundBottom3.getY_R() + rhythmBackGroundBottom3.getSpriteHeight());
+        rt3.set(ObjectManager.rhythmBackGroundBottom3.getX_R(), ObjectManager.rhythmBackGroundBottom3.getY_R(), ObjectManager.rhythmBackGroundBottom3.getX_R() + ObjectManager.rhythmBackGroundBottom3.getSpriteWidth(), ObjectManager.rhythmBackGroundBottom3.getY_R() + ObjectManager.rhythmBackGroundBottom3.getSpriteHeight());
 
 
         //터치받은 액션으로 부터 좌표를 받아옴
@@ -347,33 +338,33 @@ public class GameState extends Thread implements IState {
                 }
             }
             //그 노트를 판정함
-            rhythmeEffect[note_line].setNote(System.currentTimeMillis());
-            ObjectManager.note_Vector.get(note_i).noteJudge(note_i, note_line);
+            ObjectManager.rhythmeEffect[note_line].setNote(System.currentTimeMillis());
+            ObjectManager.note_Vector.get(note_i).noteJudge(note_line);
         }
 
 
         //D-Pad에 터치좌표가 있을경우
         if (rt.contains(t2_x, t2_y)) {
             //D-Pad의 버튼을 누른곳으로 움직여줌
-            dpad_MiniCircle.setPosition((int) ((t2_x - 75) / GameActivity.size), (int) ((t2_y - 75) / GameActivity.size));
+            ObjectManager.dpad_MiniCircle.setPosition((int) ((t2_x - 75) / GameActivity.size), (int) ((t2_y - 75) / GameActivity.size));
             //각도계산기를 호출
             calcAngle();
             //상태를 무브로 바꿈
-            player_Vector.get(player_Num).setMove_Check(true);
+            ObjectManager.player_Vector.get(player_Num).setMove_Check(true);
         }
 
         //손을 땔때 dpad의 값들을 초기화 시켜줌
         if (action == MotionEvent.ACTION_UP) {
             t2_x = 0;
             t2_y = 0;
-            dpad_MiniCircle.setPosition(dpad_MiniCircle.x_ori, dpad_MiniCircle.y_ori);
-            player_Vector.get(player_Num).setMove_Check(false);
+            ObjectManager.dpad_MiniCircle.setPosition(ObjectManager.dpad_MiniCircle.x_ori, ObjectManager.dpad_MiniCircle.y_ori);
+            ObjectManager.player_Vector.get(player_Num).setMove_Check(false);
         }
 
         //몹에 무빙을 위한 판정요소들을 넣어줌
-        player_Vector.get(player_Num).setDis(dx, dy);
-        player_Vector.get(player_Num).setTouch(t2_x, t2_y);
-        player_Vector.get(player_Num).setDpadCircle(dpad_Circle.getX_R(), dpad_Circle.getY_R());
+        ObjectManager.player_Vector.get(player_Num).setDis(dx, dy);
+        ObjectManager.player_Vector.get(player_Num).setTouch(t2_x, t2_y);
+        ObjectManager.player_Vector.get(player_Num).setDpadCircle(ObjectManager.dpad_Circle.getX_R(), ObjectManager.dpad_Circle.getY_R());
 
         return true;
     }
@@ -381,10 +372,10 @@ public class GameState extends Thread implements IState {
 
     //D-Pad에서 사용자가 누르고 있는 곳과 D-Pad의 중심의 각을 구하는 메소드
     public void calcAngle() {
-        dx = t2_x - (dpad_Circle.getX_R() + 200 * GameActivity.size);
-        dy = t2_y - (dpad_Circle.getY_R() + 200 * GameActivity.size);
+        dx = t2_x - (ObjectManager.dpad_Circle.getX_R() + 200 * GameActivity.size);
+        dy = t2_y - (ObjectManager.dpad_Circle.getY_R() + 200 * GameActivity.size);
 
         angle = 90 + Math.toDegrees(Math.atan2(dy, dx));
-        player_Vector.get(player_Num).setAngle(angle);
+        ObjectManager.player_Vector.get(player_Num).setAngle(angle);
     }
 }

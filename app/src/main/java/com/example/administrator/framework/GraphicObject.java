@@ -12,6 +12,7 @@ public class GraphicObject {
     protected int x;
     protected int y;
 
+
     public GraphicObject(Bitmap bitmap) {
         this.bitmap = bitmap;
         x = 0;

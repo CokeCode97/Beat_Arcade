@@ -9,7 +9,8 @@ import com.example.administrator.framework.SpriteAnimation;
  */
 
 public class ShootingObject extends SpriteAnimation {
-    int x, y, width, height;
+    int width, height;
+    double shooting_X, shooting_Y;
     float speed;
     public ShootingObject(Bitmap bitmap, int width, int height) {
         super(bitmap);
@@ -20,19 +21,20 @@ public class ShootingObject extends SpriteAnimation {
 
     //바라보고 있는 각도에 따라 움직이도록 해줌
     public void Move(double angle, float speed) {
+        this.shooting_X = getX();
+        this.shooting_Y = getY();
+
         this.speed = speed;
-        this.x = getX();
-        this.y = getY();
 
         angle = Math.toRadians(angle);
-        this.x += (int)(Math.sin(angle)*this.speed);
-        this.y -= (int)(Math.cos(angle)*this.speed);
+        this.shooting_X += (Math.sin(angle)*this.speed);
+        this.shooting_Y -= (Math.cos(angle)*this.speed);
 
-        if(this.x < 500) { this.x = 500; }
-        if(this.x > 1920-width) { this.x = 1920-width; }
-        if(this.y < 0 ) { this.y = 0; }
-        if(this.y > 1080-height) { this.y = 1080-height; }
+        if(this.shooting_X < 500) { this.shooting_X = 500; }
+        if(this.shooting_X > 1920-width) { this.shooting_X = 1920-width; }
+        if(this.shooting_Y < 0 ) { this.shooting_Y = 0; }
+        if(this.shooting_Y > 1080-height) { this.shooting_Y = 1080-height; }
 
-        setPosition(this.x, this.y);
+        setPosition((int)this.shooting_X, (int)this.shooting_Y);
     }
 }

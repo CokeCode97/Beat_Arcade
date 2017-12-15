@@ -47,7 +47,6 @@ public class GameViewThread extends Thread {
                         now = System.currentTimeMillis();
                         dt = (now - last);
                     }
-                    //gameView.Update();
                     gameView.onDraw(canvas);
                 }
             } catch (Exception e) {

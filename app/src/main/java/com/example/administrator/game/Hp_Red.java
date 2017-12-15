@@ -9,17 +9,23 @@ import com.example.administrator.framework.R;
  */
 
 class HP_Red extends Graphic {
-    private int width = 235, height = 11;
-    public HP_Red(int x) {
+    private int width = 368, height = 44;
+    HP_Black hp_black;
+    public HP_Red(HP_Black hp_black) {
         super(AppManager.getInstance().getBitmap(R.drawable.hp_red));
-        this.InitSpriteData(height, width, 2.5f);
-        setPosition(556 + x, 54);
+        this.hp_black = hp_black;
+        this.InitSpriteData(height, width, 1.5f);
+        setPosition(hp_black.getX() + 25, 48);
+    }
+
+    public void Update(long GameTime) {
     }
 
     //TODO 체력바 렌더링을 조절함
     //ratio = 최대체력과 현재체력의 비율
     public void hp_Update(double ratio) {
-        this.InitSpriteData(height, (int)(width*ratio), 2.5f);
+        this.InitSpriteData(height, (int)(width*ratio), 1.5f);
+        ObjectManager.hp_Yellow_Vector.get(ObjectManager.hp_Red_Vector.indexOf(this)).setHP_Ratio(ratio);
     }
 }
 

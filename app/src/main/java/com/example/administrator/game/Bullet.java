@@ -31,7 +31,7 @@ public class Bullet extends ShootingObject {
     //GameTime = 현재시간
     public void Update(long GameTime) {
         //맵을 벗어나면 제거
-        if(this.x <= 500 || this.x >= 1920 - width || this.y <= 0 || this.y >= 1080 - height) {
+        if(this.getX() <= 501 || this.getX() >= 1919 - width || this.getY() <= 1 || this.getY() >= 1079 - height) {
             ObjectManager.removeBullet(this);
         } else { //맵안에 있을때는 충돌박스를 업데이트하며 이동함
             Move(angle, speed_Pre);

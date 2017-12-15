@@ -41,6 +41,7 @@ public class RhythmNote extends SpriteAnimation {
         this.note_y += y;
         if(note_y > 930) {
             ObjectManager.makeJudge(0);
+            ObjectManager.rhythmCombo.comboReset();
             ObjectManager.removeNote(this);
         }
         this.setPosition(note_x, note_y);
@@ -54,7 +55,7 @@ public class RhythmNote extends SpriteAnimation {
 
     //노트를 판정하는 메소드
     //note_num = 판정할 노트의 nv인덱스넘버
-    public void noteJudge(int note_num, int note_line) {
+    public void noteJudge(int note_line) {
         int judge_point = 0; //판정을 담당할 숫자
         if(note_line == this.getNoteNum()) {
             //시작시 판정변수가 0으로 시작하며 범위를 줄여주면서 해당범위에 들어있다면 1을 더해줌
@@ -73,8 +74,12 @@ public class RhythmNote extends SpriteAnimation {
                 //최종적으로 합산된 판정값을 가지고 판정출력객체를 생성
                 ObjectManager.makeJudge(judge_point);
 
+                if(judge_point > 0) {
+                    ObjectManager.rhythmCombo.comboup(judge_point);
+                }
+
                 //콤보매니저 호출
-                GameState.rhythmCombo.comboManager();
+                ObjectManager.rhythmCombo.comboManager();
 
                 //이후 노트를 삭제
                 ObjectManager.removeNote(this);

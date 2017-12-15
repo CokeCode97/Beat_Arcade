@@ -14,6 +14,6 @@ public class RhythmBackGroundBottom3 extends Graphic {
     public RhythmBackGroundBottom3 () {
         super((AppManager.getInstance().getBitmap(R.drawable.newbackground_bottom_3)));
         this.InitSpriteData(250, 166, 1);
-        setPosition(326, 830);
+        setPosition(334, 830);
     }
 }
