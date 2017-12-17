@@ -34,7 +34,7 @@ public class HP_Black extends Graphic {
         if(HP_Shake) {
             setPosition(600 + position_x, 30);
             setHPbar();
-            if(GameTime - time_ShakeStart > 500 && HP_ShakeMove) {
+            if(GameTime - time_ShakeStart > 700 && HP_ShakeMove) {
                 HP_Shake = false;
             } else {
                 if (!HP_ShakeMove) {

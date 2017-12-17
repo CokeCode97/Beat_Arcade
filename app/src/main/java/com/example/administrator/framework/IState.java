@@ -1,9 +1,9 @@
 package com.example.administrator.framework;
 
+import android.content.Context;
 import android.graphics.Canvas;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
-import android.view.View;
 
 /**
  * Created by Administrator on 2017-11-27.
@@ -12,7 +12,7 @@ import android.view.View;
 public interface IState {
 
     //이 상대로 바뀌었을때 실행
-    public void Init();
+    public void Init(Context context);
 
     //다른 상태로 바뀔때 실행
     public void Destroy();

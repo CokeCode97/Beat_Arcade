@@ -1,8 +1,7 @@
 package com.example.administrator.game;
 
-import android.util.Log;
-
 import com.example.administrator.framework.GameView;
+import com.example.administrator.framework.SoundManager;
 
 import java.util.StringTokenizer;
 
@@ -11,6 +10,7 @@ import java.util.StringTokenizer;
  */
 
 public class PacketManager {
+    static boolean gamePlay = true;
     // TODO 클라이언트에서 수신한 메세지를 분석하고 그에맞는 일을 처리함
     public static void check_Message(String string) {
         //데이터를 분석하기 위해 스트링 토크나이저를 생성
@@ -23,7 +23,7 @@ public class PacketManager {
 
             //태그에 따라 다른 작동을 함
             switch (tag) {
-                case "AllReady" : {
+                case "AllReady": {
                     GameView.changeGameState();
                     break;
                 }
@@ -49,7 +49,7 @@ public class PacketManager {
                     int player_Num = Integer.parseInt(stringTokenizer.nextToken());
                     ObjectManager.player_Vector.get(player_Num).shooting_X = Integer.parseInt(stringTokenizer.nextToken());
                     ObjectManager.player_Vector.get(player_Num).shooting_Y = Integer.parseInt(stringTokenizer.nextToken());
-                    ObjectManager.player_Vector.get(player_Num).setPosition((int)(ObjectManager.player_Vector.get(player_Num).shooting_X), (int)(ObjectManager.player_Vector.get(player_Num).shooting_Y));
+                    ObjectManager.player_Vector.get(player_Num).setPosition((int) (ObjectManager.player_Vector.get(player_Num).shooting_X), (int) (ObjectManager.player_Vector.get(player_Num).shooting_Y));
 
                     break;
                 }
@@ -99,6 +99,30 @@ public class PacketManager {
                                 ObjectManager.bullet_Vector.remove(collider_Index);
 
                             break;
+                        }
+                    }
+                    break;
+                }
+
+                case "Result" : {
+                    SoundManager.getInstance().MediaStop();
+                    for(int i = 0; i < 2; i++) {
+                        int player_Num = Integer.parseInt(stringTokenizer.nextToken());
+                        String result = stringTokenizer.nextToken();
+                        if(player_Num == GameState.getPlayer_Num()) {
+                            switch (result) {
+                                case "WIN": {
+                                    WinState winState = new WinState();
+                                    GameView.changeState(winState);
+                                    break;
+                                }
+
+                                case "DEFEAT": {
+                                    DefeatState defeatState = new DefeatState();
+                                    GameView.changeState(defeatState);
+                                    break;
+                                }
+                            }
                         }
                     }
                     break;

@@ -8,7 +8,7 @@ import com.example.administrator.framework.R;
  * Created by mac on 2017. 12. 13..
  */
 
-class HP_Red extends Graphic {
+public class HP_Red extends Graphic {
     private int width = 368, height = 44;
     HP_Black hp_black;
     public HP_Red(HP_Black hp_black) {

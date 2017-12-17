@@ -2,13 +2,13 @@ package com.example.administrator.framework;
 
 import android.content.Context;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
 import com.example.administrator.game.GameState;
-import com.example.administrator.game.LodingState;
 import com.example.administrator.game.UpdateManager;
 
 /**
@@ -18,7 +18,7 @@ import com.example.administrator.game.UpdateManager;
 public class GameView extends SurfaceView implements SurfaceHolder.Callback {
     //게임뷰 스레드& IState 저장
     public GameViewThread gameview_thread;
-    private static IState istate;
+    public static IState istate;
     private static GameState gameState;
     private static Context context;
     public static UpdateManager updateManager;
@@ -41,17 +41,13 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         //게임뷰 스레드에 홀더와 게임뷰를 넘겨줌
         gameview_thread = new GameViewThread(getHolder(), this);
         updateManager = new UpdateManager();
-
-        LodingState lodingState = new LodingState();
-        changeState(lodingState);
-
     }
 
     //화면을 그려주는 온드로우() 메소드
     @Override
     public void onDraw(Canvas canvas) {
         //화면을 검게 칠함
-        //canvas.drawColor(Color.BLACK);
+        canvas.drawColor(Color.BLACK);
         //istate 랜더를 불러들여 istate
         updateManager.setCheck(true);
         istate.Render(canvas);
@@ -65,14 +61,13 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
             istate.Destroy();
         }
         //새 istate를 적용시킴
-        istate.Init();
+        istate.Init(context);
         GameView.istate = istate;
-        updateManager.changeState(istate);
     }
 
     //게임뷰의 상태를 게임스테이트로 바꿔줌
     public static void changeGameState() {
-        gameState = new GameState(context);
+        gameState = new GameState();
         changeState(gameState);
     }
 

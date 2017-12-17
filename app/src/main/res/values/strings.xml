@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">Beat</string>
+    <string-array name="spinner">
+        <item> 함정카드 - 유희왕 </item>
+        <item> Blue - 볼빨간사춘기 </item>
+        <item> 루피 - 원피스 </item>
+        <item> 테란 - 스타크래프트 </item>
+    </string-array>
 </resources>

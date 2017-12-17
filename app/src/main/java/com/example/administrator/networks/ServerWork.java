@@ -119,6 +119,14 @@ public class ServerWork extends Thread {
         serverMap.get(opponentName).write(sendData + "\n");
     }
 
+    public static void my_Write(String sendData) {
+        serverMap.get(myName).write(sendData + "\n");
+    }
+
+    public static void opponent_Wirte(String sendData){
+        serverMap.get(opponentName).write(sendData + "\n");
+    }
+
 
     //각각의 클라이언트와 통신을 하는 쓰레드
     final class ServerThread extends Thread {
@@ -132,6 +140,7 @@ public class ServerWork extends Thread {
         private BufferedReader reader;
 
         private int player_Num = 0;
+        private int enemy_Num = 1;
 
         public int getPlayer_Num() {
             return player_Num;
@@ -140,6 +149,11 @@ public class ServerWork extends Thread {
         public ServerThread(Socket socket, int player_Num) {
             this.socket = socket;
             this.player_Num = player_Num;
+            if(player_Num == 0) {
+                enemy_Num = 1;
+            } else {
+                enemy_Num = 0;
+            }
 
             try {
                 writer = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
@@ -184,6 +198,7 @@ public class ServerWork extends Thread {
             switch (tag) {
                 //플레이어가 준비됨
                 case "Ready" : {
+                    Log.d("check", player_Num + " ready");
                     playerReady_Check[player_Num] = true;
                     if (playerReady_Check[0] && playerReady_Check[1] && !allready_Check ) {
                         all_Write("AllReady");
@@ -234,6 +249,10 @@ public class ServerWork extends Thread {
                         }
                     }
                     break;
+                }
+
+                case "Die" : {
+                    all_Write("Result " + player_Num + " " + "DEFEAT " + enemy_Num + " " + "WIN");
                 }
             }
         }

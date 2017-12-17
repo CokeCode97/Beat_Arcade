@@ -16,6 +16,7 @@ import java.net.DatagramSocket;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.StringTokenizer;
 
 /**
  * Created by LeeSugyun on 2017-12-03.
@@ -40,6 +41,10 @@ public class ChallengeStart {
     private Context context;
     private Activity activity;
 
+    // TODO : 추가 - 12/17
+    private String songName = "";
+    private String hostName = "";
+
     public ChallengeStart(String challengerName, String challengerIP, int broadcastPort, int connectionPort, Intent intent, Handler handler, ListView hostList, Context context) {
         this.challengerName = challengerName; // 호스트를 검색하여 접속할 도전자의 정보
         this.challengerIP = challengerIP;
@@ -63,7 +68,6 @@ public class ChallengeStart {
     }
 
 
-
     // TODO 호스트를 검색하는 스레드
     final class SearchingThread extends Thread {
         private boolean flag = true; // 스레드를 제어 할 플래그변수
@@ -72,7 +76,7 @@ public class ChallengeStart {
         public void run() {
             try {
                 DatagramSocket socket = new DatagramSocket(broadcastPort); // 방송 청취에 사용될 데이터그램 소켓
-                byte[] broadcastData = new byte[20]; // 청취 데이터를 담을 버퍼
+                byte[] broadcastData = new byte[50]; // 청취 데이터를 담을 버퍼
 
                 while (flag) {
                     // 방송을 청취하여 버퍼에 담는 패킷
@@ -80,6 +84,12 @@ public class ChallengeStart {
                     socket.receive(packet); // 소켓으로부터 한번 씩 패킷을 청취
 
                     String foundName = new String(packet.getData()); // 청취한 데이터 (방송을 한 호스트의 이름)
+
+                    // TODO : foundName -> hostName songName
+                    StringTokenizer stringTokenizer = new StringTokenizer(foundName, ":");
+                    hostName = stringTokenizer.nextToken();
+                    songName = stringTokenizer.nextToken();
+
                     String foundIP = packet.getAddress().getHostAddress(); // 청취한 패킷의 호스트 주소
 
                     // 청취 내용(호스트 이름, 호스트 주소)을 해쉬맵에 담고, 그 해쉬맵이 어레이리스트에 없으면, 새로 넣어줌
@@ -114,7 +124,7 @@ public class ChallengeStart {
         public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
             HashMap<String, String> hashMap = hostArray.get(i); // 클릭한 아이템의 인덱스와 같은 어레이리스트의 엘리먼트를 가져옴
 
-            String opponentName = hashMap.get("foundName"); // 가져온 엘리먼트에서 검색한 호스트 이름과 IP를 추출
+            String opponentName = hostName; // 가져온 엘리먼트에서 검색한 호스트 이름과 IP를 추출
             String opponentIP = hashMap.get("foundIP");
 
             try {
@@ -132,6 +142,8 @@ public class ChallengeStart {
                 intent.putExtra("opponentName", opponentName);
                 intent.putExtra("opponentIP", opponentIP);
                 intent.putExtra("isHost", "no"); // 이 클라이언트는 이후에 서버를 열지 않고, 접속만 함
+                // TODO : 추가 - 12/17
+                intent.putExtra("songName", songName);
 
                 searchingThread.flag = false; // 호스트를 검색하고, 리스트뷰에 올리는 작업을 중지
 

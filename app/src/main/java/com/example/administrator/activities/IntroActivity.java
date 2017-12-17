@@ -3,10 +3,10 @@ package com.example.administrator.activities;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.os.StrictMode;
-import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ListView;
@@ -49,8 +49,8 @@ public class IntroActivity extends Activity {
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
         setTheme(android.R.style.Theme_NoTitleBar_Fullscreen);
         setContentView(R.layout.activity_intro);
-    }
 
+}
     @Override
     protected void onStart() {
         super.onStart();
@@ -76,7 +76,7 @@ public class IntroActivity extends Activity {
             @Override
             public void onClick(View view) {
                 hostBtn.setEnabled(false); joinBtn.setEnabled(false);
-                hostStart = new HostStart("host", myIP, bPort, cPort, intent, handler);
+                hostStart = new HostStart("host", myIP, bPort, cPort, intent, handler, hostList, IntroActivity.this);
             }
         });
 
@@ -88,13 +88,6 @@ public class IntroActivity extends Activity {
             }
         });
 
-        testBtn = (Button) findViewById(R.id.testBtn);
-        testBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                startActivity(new Intent(IntroActivity.this, GameActivity.class));
-            }
-        });
     }
 
     private String getLocalServerIp()

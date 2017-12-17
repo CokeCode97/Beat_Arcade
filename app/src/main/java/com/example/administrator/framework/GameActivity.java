@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.view.WindowManager;
 
+import com.example.administrator.game.LodingState;
 import com.example.administrator.networks.ClientWork;
 import com.example.administrator.networks.ServerWork;
 
@@ -25,6 +26,9 @@ public class GameActivity extends Activity {
     private String opponentIP;
     private String isHost;
 
+    // TODO : 추가 - 12/17
+    private String songName;
+
     private int myPlayerNum = -1;
     public int getMyPlayerNum() { return myPlayerNum; }
 
@@ -44,6 +48,10 @@ public class GameActivity extends Activity {
         opponentName = getIntent().getStringExtra("opponentName");
         opponentIP = getIntent().getStringExtra("opponentIP");
         isHost = getIntent().getStringExtra("isHost");
+
+        // TODO : 추가 - 12/17
+        songName = getIntent().getStringExtra("songName");
+
 
         if (isHost.equals("yes")) {
             serverWork = new ServerWork(myName, myIP, opponentName, opponentIP, gamePort);
@@ -68,6 +76,10 @@ public class GameActivity extends Activity {
         gameView = new GameView(this);
         setContentView(gameView);
         clientWork.start();
+        SoundManager.getInstance().Init(this, songName);
+        LodingState lodingState = new LodingState();
+        lodingState.setSongName(songName);
+        GameView.changeState(lodingState);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
     }
 
@@ -82,6 +94,4 @@ public class GameActivity extends Activity {
         super.onResume();
         gameView.gameview_thread.setRunnig(true);
     }
-
-
 }

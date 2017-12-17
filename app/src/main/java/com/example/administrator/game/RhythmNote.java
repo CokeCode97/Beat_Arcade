@@ -59,13 +59,13 @@ public class RhythmNote extends SpriteAnimation {
         int judge_point = 0; //판정을 담당할 숫자
         if(note_line == this.getNoteNum()) {
             //시작시 판정변수가 0으로 시작하며 범위를 줄여주면서 해당범위에 들어있다면 1을 더해줌
-            if (this.getY() < 930 && this.getY() > 690) {
+            if (this.getY() < 950 && this.getY() > 670) {
                 judge_point++;
-                if (this.getY() < 910 && this.getY() > 710) {
+                if (this.getY() < 930 && this.getY() > 690) {
                     judge_point++;
-                    if (this.getY() < 890 && this.getY() > 730) {
+                    if (this.getY() < 910 && this.getY() > 710) {
                         judge_point++;
-                        if (this.getY() < 870 && this.getY() > 750) {
+                        if (this.getY() < 850 && this.getY() > 730) {
                             judge_point++;
                         }
                     }

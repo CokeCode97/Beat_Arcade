@@ -1,7 +1,16 @@
 package com.example.administrator.networks;
 
+import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Handler;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
+import android.widget.Toast;
+
+import com.example.administrator.framework.R;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -32,13 +41,41 @@ public class HostStart {
 
     private Handler handler;
 
-    public HostStart(String hostName, String hostIP, int broadcastPort, int connectionPort, Intent intent, Handler handler) {
+    // TODO : 추가 - 12/17
+    //private ArrayList<Integer> songArray;
+    private ListView songList;
+    private ArrayAdapter adapter;
+    private Context context;
+    private Activity activity;
+    private int songID = 0;
+    private String songName = "";
+    private String[] songNameArray;
+
+    public HostStart(String hostName, String hostIP, int broadcastPort, int connectionPort, Intent intent, Handler handler, ListView songList, Context context) {
         this.hostName = hostName; // 호스트의 정보
         this.hostIP = hostIP;
         this.broadcastPort = broadcastPort; // 데이터그램 방송에 사용될 포트
         this.connectionPort = connectionPort; // 연결확인에 사용될 포트
         this.intent = intent; // TODO 연결결과를 담는 인텐트
         this.handler = handler; // TODO 방송을 마치고 연결을 확인후, 다음으로의 진행을 구현하는 핸들러
+
+
+
+
+        // TODO : 추가 - 12/17
+        //this.songArray = new ArrayList<>();
+        //songArray.add(R.raw.note_1); songArray.add(R.raw.note_1); songArray.add(R.raw.note_1);
+        this.songList = songList;
+        this.context = context;
+        this.activity = (Activity) context;
+
+        songNameArray = context.getResources().getStringArray(R.array.spinner);
+        adapter = new ArrayAdapter(context, android.R.layout.simple_list_item_1, songNameArray);
+        songList.setAdapter(adapter);
+        songList.setOnItemClickListener(new SongListOnClick());
+
+
+
 
         StringTokenizer stz = new StringTokenizer(hostIP, ".");
         broadcastIP = "";
@@ -49,9 +86,14 @@ public class HostStart {
         //broadcastIP = hostIP.substring(0, hostIP.length() - 1) + "255"; // 방송에 사용 될 로컬 주소 (255 : 광역)
 
         broadcastingThread = new BroadcastingThread();
-        broadcastingThread.start();
         connectionThread = new ConnectionWaitingThread();
-        connectionThread.start();
+
+
+
+
+        // TODO : 추가 - 12/17
+        //broadcastingThread.start();
+        //connectionThread.start();
     }
 
 
@@ -64,7 +106,7 @@ public class HostStart {
             try {
                 DatagramSocket socket = new DatagramSocket(); // 방송에 사용 될 데이터그램 소켓
                 InetAddress ip = InetAddress.getByName(broadcastIP); // 방송할 로컬 주소
-                byte[] broadcastData = hostName.getBytes(); // 방송할 데이터 (호스트 이름)
+                byte[] broadcastData = (hostName + ":" + songName + ":").getBytes(); // 방송할 데이터 (호스트 이름 + 곡 이름)
 
                 while (flag) {
                     // 방송할 네트워크 포트로 전송할 패킷
@@ -109,6 +151,7 @@ public class HostStart {
                 intent.putExtra("opponentName", opponentName);
                 intent.putExtra("opponentIP", opponentIP);
                 intent.putExtra("isHost", "yes"); // 이 클라이언트는 이후에 서버를 엶
+                intent.putExtra("songName", songName);
 
                 broadcastingThread.flag = false; // 데이터그램 방송을 중지
 
@@ -116,6 +159,21 @@ public class HostStart {
 
             } catch (IOException e) {
                 e.printStackTrace();
+            }
+        }
+    }
+
+    // TODO : 추가 - 12/17
+    final class SongListOnClick implements AdapterView.OnItemClickListener {
+        private boolean flag = true;
+        @Override
+        public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+            if (flag) {
+                flag = false;
+                songName = songNameArray[i];
+                broadcastingThread.start();
+                connectionThread.start();
+                Toast.makeText(context, songName, Toast.LENGTH_SHORT).show();
             }
         }
     }

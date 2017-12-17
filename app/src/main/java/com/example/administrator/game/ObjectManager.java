@@ -1,5 +1,7 @@
 package com.example.administrator.game;
 
+import android.graphics.Bitmap;
+
 import java.util.Random;
 import java.util.Vector;
 
@@ -21,6 +23,7 @@ public class ObjectManager {
     public static Vector<HP_Black> hp_Black_Vector = new Vector<>();
     public static Vector<HP_Red> hp_Red_Vector = new Vector<>();
     public static Vector<HP_Yellow> hp_Yellow_Vector = new Vector<>();
+    public static Vector<DamageNumber> damageNumber_Vector = new Vector<>();
 
     public static Vector<Player> player_Vector = new Vector<>();
 
@@ -40,17 +43,27 @@ public class ObjectManager {
 
     public static RhythmeEffect[] rhythmeEffect = new RhythmeEffect[3];
 
+    public static ResultBack resultBack = new ResultBack();
+    public static Victory victory = new Victory();
+    public static Defeat defeat = new Defeat();
+
+    public static LodingBack lodingBack = new LodingBack();
+    public static LodingBarBack lodingBarBack = new LodingBarBack();
+    public static LodingBarFront lodingBarFront = new LodingBarFront();
+
+
+
 
     //노트를 생성함
-    public static void MakeNote() {
+    public static void MakeNote(int note_num) {
         //500ms마다 노트를 생성
-        if(System.currentTimeMillis() - Last >= 500) {
+        /*if(System.currentTimeMillis() - Last >= 500) {
             Last = System.currentTimeMillis();
-            int rhythme_num = random.nextInt(3);
+            int rhythme_num = random.nextInt(3);*/
             //랜덤으로 노트번호를 0~2까지 정하여 생성한후 노트를 nv 추가
-            RhythmNote note = new RhythmNote(GameState.note_Bitmap[rhythme_num], rhythme_num);
+            RhythmNote note = new RhythmNote(GameState.note_Bitmap[note_num], note_num);
             note_Vector.add(note);
-        }
+        //}
     }
 
     //판정을 생성함
@@ -73,6 +86,11 @@ public class ObjectManager {
     public static void makeSlow_Effect(int x, int y){
         slowEffect_Vector.add(new SlowEffect(GameState.slow_Bitmap, System.currentTimeMillis(), x, y));
     }
+
+    public static void makeDamage(Bitmap bitmap, int damage, int num_max, int num_this, int x, int y) {
+        damageNumber_Vector.add(new DamageNumber(bitmap , damage, num_max, num_this, x, y));
+    }
+
 
 
     //선택된 노트를 제거함
@@ -97,4 +115,6 @@ public class ObjectManager {
     //선택된 SlowEffect을 제거함
     //slow_Effect = 제거할 판정표시객체
     public static void removeSlow_Effect(SlowEffect slow_effect) { slowEffect_Vector.remove(slow_effect); }
+
+    public static void removeDamage(DamageNumber damageNumber) { damageNumber_Vector.remove(damageNumber); }
 }

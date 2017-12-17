@@ -2,10 +2,7 @@ package com.example.administrator.game;
 
 import android.graphics.Bitmap;
 import android.graphics.Rect;
-import android.util.Log;
 
-import com.example.administrator.framework.AppManager;
-import com.example.administrator.framework.R;
 import com.example.administrator.networks.ClientWork;
 
 import java.util.Vector;
@@ -28,6 +25,8 @@ public class Player extends ShootingObject {
     //체력
     double HP_Max = 500;
     double HP_Pre = 500;
+
+    public double getHP_Pre() { return HP_Pre; }
 
     //각도, 중심과 터치좌표의 거리
     double angle, dx, dy;
@@ -119,15 +118,26 @@ public class Player extends ShootingObject {
     public void hit(double damage) {
         //콤보만큼 체력을 감소시킴
         HP_Pre -= damage;
+        int num = 0;        //데미지의 자릿수
+        int check = 1;      //데미지의의 자릿수를 구하기위해 사용될 체크
+
+
+        //데미지가 몇자리수인지 체크하는 메소드
+        while ((int)damage / check > 0) {
+            num++;
+            check = check * 10;
+        }
+
+        for(int i = 0; i < num; i++) {
+            ObjectManager.makeDamage(GameState.damage_Bitmap, (int)damage, num, i, getX(), getY());
+        }
+
         //체력이 0이되면 제거함
         if(HP_Pre <= 0) {
-            ObjectManager.player_Vector.remove(this);
+            ClientWork.write("Die");
         }
         //체력상황에 따라 체력바를 조절
         ObjectManager.hp_Red_Vector.get(ObjectManager.player_Vector.indexOf(this)).hp_Update(HP_Pre/HP_Max);
-        if(HP_Max/damage <= 10) {
-            ObjectManager.hp_Black_Vector.get(ObjectManager.player_Vector.indexOf(this)).setShake(System.currentTimeMillis());
-        }
     }
 
 

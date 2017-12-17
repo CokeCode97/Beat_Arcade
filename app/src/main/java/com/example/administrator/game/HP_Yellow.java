@@ -13,6 +13,8 @@ public class HP_Yellow extends Graphic {
     HP_Black hp_black;
     double HP_Ratio_Ori = 1;
     double HP_Ratio_Pre = 1;
+    double HP_Ratio_Past = 1;
+    int check_Timer;
 
     public HP_Yellow(HP_Black hp_black) {
         super(AppManager.getInstance().getBitmap(R.drawable.hp_yellow));
@@ -23,6 +25,18 @@ public class HP_Yellow extends Graphic {
 
     //TODO 노란색 HP바를 천천히 줄어들게함
     public void Update(long GameTime) {
+        if(check_Timer > 20) {
+            if (HP_Ratio_Past - HP_Ratio_Pre >= 0.1) {
+                ObjectManager.hp_Black_Vector.get(ObjectManager.hp_Yellow_Vector.indexOf(this)).setShake(GameTime);
+                check_Timer = 0;
+            }
+            HP_Ratio_Past = HP_Ratio_Pre;
+        }
+
+        check_Timer++;
+
+        HP_Ratio_Past = HP_Ratio_Pre;
+
         if(HP_Ratio_Ori > HP_Ratio_Pre) {
             HP_Ratio_Ori -= 0.005;
             this.InitSpriteData(height, (int)(width*HP_Ratio_Ori), 1.5f);

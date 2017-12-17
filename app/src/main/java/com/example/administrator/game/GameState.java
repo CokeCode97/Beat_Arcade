@@ -11,11 +11,7 @@ import com.example.administrator.framework.AppManager;
 import com.example.administrator.framework.GameActivity;
 import com.example.administrator.framework.IState;
 import com.example.administrator.framework.R;
-import com.example.administrator.networks.ClientWork;
-
-import java.util.Random;
-import java.util.StringTokenizer;
-import java.util.Vector;
+import com.example.administrator.framework.SoundManager;
 
 /**
  * Created by Administrator on 2017-11-28.
@@ -23,6 +19,7 @@ import java.util.Vector;
 
 public class GameState implements IState {
     private GameActivity gameActivity;
+    private NoteMakeThread noteMakeThread = new NoteMakeThread();;
 
     //비트맵 데이터
     public static Bitmap[] judge_Bitmap = new Bitmap[5];
@@ -34,11 +31,17 @@ public class GameState implements IState {
     public static Bitmap combo_Bitmap;
     public static Bitmap comboNumber_Bitmap;
     public static Bitmap bullet_Bitmap;
-
+    public static Bitmap damage_Bitmap;
+    public static Bitmap trap_Bitmap;
+    public static Bitmap blue_Bitmap;
+    public static Bitmap onepiece_Bitmap;
 
     private int t2_x = 0, t2_y = 0;     //D-Pad좌표
     private double angle;               //각도
     private double dx, dy;              //D-Pad의 중심과 사용자가 누른곳 사이의 거리
+
+    private long time_GameStart;
+    private boolean check_GameStart = false;
 
 
     //플레이어번호
@@ -57,7 +60,9 @@ public class GameState implements IState {
     }
 
 
-    public GameState(Context context) {
+    //시작될때 여러 비트맵 데이터나 객체들을 메모리에 올림
+    @Override
+    public void Init(Context context) {
         //게임액티비티를 저장
         gameActivity = (GameActivity) context;
 
@@ -91,6 +96,7 @@ public class GameState implements IState {
         combo_Bitmap = AppManager.getInstance().getBitmap(R.drawable.combo);
         comboNumber_Bitmap = AppManager.getInstance().getBitmap(R.drawable.number_sprite);
         bullet_Bitmap = AppManager.getInstance().getBitmap(R.drawable.bullet);
+        damage_Bitmap = AppManager.getInstance().getBitmap(R.drawable.number_sprite2);
 
         //리듬콤보를 관리 출력할 리듬콤보객체를 생성
         ObjectManager.rhythmCombo = new RhythmCombo(combo_Bitmap);
@@ -114,12 +120,8 @@ public class GameState implements IState {
         ObjectManager.rhythmeEffect[0] = new RhythmeEffect(effect_Bitmap[0], 0);
         ObjectManager.rhythmeEffect[1] = new RhythmeEffect(effect_Bitmap[1],1);
         ObjectManager.rhythmeEffect[2] = new RhythmeEffect(effect_Bitmap[2],2);
-    }
 
-
-    //시작될때 여러 비트맵 데이터나 객체들을 메모리에 올림
-    @Override
-    public void Init() {
+        time_GameStart = System.currentTimeMillis();
     }
 
     @Override
@@ -133,6 +135,12 @@ public class GameState implements IState {
     public void Update() {
         //GameTime에 현재 시간을 넣어줌
         long GameTime = System.currentTimeMillis();
+
+        if(!check_GameStart && GameTime - time_GameStart > 2000) {
+            SoundManager.getInstance().MediaPlay();
+            noteMakeThread.start();
+            check_GameStart = true;
+        }
 
         //note_Vector 안에 있는 모든 객체의 Update를 호출
         for (int i = 0; i < ObjectManager.note_Vector.size(); i++) {
@@ -167,23 +175,25 @@ public class GameState implements IState {
             ObjectManager.bullet_Vector.get(i).Update(GameTime);
         }
 
-        //hp벡터 안에 있는 모든 객체를 그려줌
+        //hp벡터 안에 있는 모든 객체의 Update를 호출
         for (int i = 0; i < ObjectManager.hp_Black_Vector.size(); i++) {
             ObjectManager.hp_Black_Vector.get(i).Update(GameTime);
         }
 
-        //hp벡터 안에 있는 모든 객체를 그려줌
+        //hp벡터 안에 있는 모든 객체의 Update를 호출
         for (int i = 0; i < ObjectManager.hp_Red_Vector.size(); i++) {
             ObjectManager.hp_Red_Vector.get(i).Update(GameTime);
         }
 
-        //hp벡터 안에 있는 모든 객체를 그려줌
+        //hp벡터 안에 있는 모든 객체의 Update를 호출
         for (int i = 0; i < ObjectManager.hp_Yellow_Vector.size(); i++) {
             ObjectManager.hp_Yellow_Vector.get(i).Update(GameTime);
         }
 
-        //노트를 생성
-        ObjectManager.MakeNote();
+        //damage벡터 안에 있는 모든 객체의 Update를 호출
+        for (int i = 0; i < ObjectManager.damageNumber_Vector.size(); i++) {
+            ObjectManager.damageNumber_Vector.get(i).Update(GameTime);
+        }
     }
 
 
@@ -251,6 +261,10 @@ public class GameState implements IState {
             ObjectManager.hp_Red_Vector.get(i).Draw(canvas);
         }
 
+        //damage벡터 안에 있는 모든 객체를 그려줌
+        for (int i = 0; i < ObjectManager.damageNumber_Vector.size(); i++) {
+            ObjectManager.damageNumber_Vector.get(i).Draw(canvas);
+        }
 
         //버튼들을 그려줌
         ObjectManager.rhythmBackGroundBottom1.Draw(canvas);
