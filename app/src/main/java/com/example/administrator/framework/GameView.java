@@ -8,8 +8,7 @@ import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
-import com.example.administrator.game.GameState;
-import com.example.administrator.game.UpdateManager;
+import com.example.administrator.state.GameState;
 
 /**
  * Created by Administrator on 2017-11-27.

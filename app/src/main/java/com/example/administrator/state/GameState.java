@@ -1,4 +1,4 @@
-package com.example.administrator.game;
+package com.example.administrator.state;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -7,11 +7,19 @@ import android.graphics.Rect;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 
+import com.example.administrator.Graphic.RhythmeEffect;
 import com.example.administrator.framework.AppManager;
-import com.example.administrator.framework.GameActivity;
+import com.example.administrator.activities.GameActivity;
 import com.example.administrator.framework.IState;
+import com.example.administrator.framework.ObjectManager;
 import com.example.administrator.framework.R;
 import com.example.administrator.framework.SoundManager;
+import com.example.administrator.game.HP_Black;
+import com.example.administrator.game.HP_Red;
+import com.example.administrator.game.HP_Yellow;
+import com.example.administrator.game.NoteMakeThread;
+import com.example.administrator.game.Player;
+import com.example.administrator.game.RhythmCombo;
 
 /**
  * Created by Administrator on 2017-11-28.

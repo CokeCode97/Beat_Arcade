@@ -3,6 +3,8 @@ package com.example.administrator.framework;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 
+import com.example.administrator.activities.GameActivity;
+
 /**
  * Created by mac on 2017. 11. 28..
  */

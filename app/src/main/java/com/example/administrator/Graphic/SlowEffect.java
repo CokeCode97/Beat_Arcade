@@ -1,8 +1,9 @@
-package com.example.administrator.game;
+package com.example.administrator.Graphic;
 
 import android.graphics.Bitmap;
 
 import com.example.administrator.framework.Graphic;
+import com.example.administrator.framework.ObjectManager;
 
 /**
  * Created by Administrator on 2017-12-15.

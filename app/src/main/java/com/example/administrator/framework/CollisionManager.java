@@ -1,4 +1,4 @@
-package com.example.administrator.game;
+package com.example.administrator.framework;
 
 import android.graphics.Rect;
 

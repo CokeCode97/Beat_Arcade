@@ -2,6 +2,7 @@ package com.example.administrator.game;
 
 import com.example.administrator.framework.AppManager;
 import com.example.administrator.framework.Graphic;
+import com.example.administrator.framework.ObjectManager;
 import com.example.administrator.framework.R;
 
 /**

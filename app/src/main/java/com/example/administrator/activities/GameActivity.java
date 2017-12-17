@@ -1,11 +1,13 @@
-package com.example.administrator.framework;
+package com.example.administrator.activities;
 
 import android.app.Activity;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.view.WindowManager;
 
-import com.example.administrator.game.LodingState;
+import com.example.administrator.framework.GameView;
+import com.example.administrator.framework.SoundManager;
+import com.example.administrator.state.LodingState;
 import com.example.administrator.networks.ClientWork;
 import com.example.administrator.networks.ServerWork;
 

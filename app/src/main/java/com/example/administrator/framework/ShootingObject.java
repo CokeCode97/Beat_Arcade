@@ -1,4 +1,4 @@
-package com.example.administrator.game;
+package com.example.administrator.framework;
 
 import android.graphics.Bitmap;
 
@@ -10,7 +10,7 @@ import com.example.administrator.framework.SpriteAnimation;
 
 public class ShootingObject extends SpriteAnimation {
     int width, height;
-    double shooting_X, shooting_Y;
+    public double shooting_X, shooting_Y;
     float speed;
     public ShootingObject(Bitmap bitmap, int width, int height) {
         super(bitmap);

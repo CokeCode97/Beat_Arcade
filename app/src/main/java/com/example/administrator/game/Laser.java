@@ -3,8 +3,11 @@ package com.example.administrator.game;
 import android.graphics.Bitmap;
 import android.graphics.Rect;
 
+import com.example.administrator.framework.CollisionManager;
+import com.example.administrator.framework.ObjectManager;
 import com.example.administrator.framework.SpriteAnimation;
 import com.example.administrator.networks.ClientWork;
+import com.example.administrator.state.GameState;
 
 /**
  * Created by Administrator on 2017-12-02.

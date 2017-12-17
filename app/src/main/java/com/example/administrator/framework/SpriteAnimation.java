@@ -4,6 +4,8 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Rect;
 
+import com.example.administrator.activities.GameActivity;
+
 /**
  * Created by mac on 2017. 11. 28..
  */
@@ -43,7 +45,7 @@ public class SpriteAnimation extends GraphicObject {
     //사각형 범위만큼을 그려줌
     @Override
     public void Draw(Canvas canvas) {
-        Rect dest = new Rect(x, y, (int)(x+spriteWidth*GameActivity.size), (int)(y+spriteHeight*GameActivity.size));
+        Rect dest = new Rect(x, y, (int)(x+spriteWidth* GameActivity.size), (int)(y+spriteHeight*GameActivity.size));
         canvas.drawBitmap(bitmap, rect, dest, null);
     }
 

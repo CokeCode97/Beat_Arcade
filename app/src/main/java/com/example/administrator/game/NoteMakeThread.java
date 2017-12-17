@@ -1,5 +1,8 @@
 package com.example.administrator.game;
 
+import com.example.administrator.framework.ObjectManager;
+import com.example.administrator.state.GameState;
+import com.example.administrator.state.LodingState;
 import com.example.administrator.networks.ClientWork;
 
 /**

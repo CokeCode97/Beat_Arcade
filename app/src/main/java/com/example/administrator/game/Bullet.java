@@ -3,6 +3,9 @@ package com.example.administrator.game;
 import android.graphics.Bitmap;
 import android.graphics.Rect;
 
+import com.example.administrator.framework.ObjectManager;
+import com.example.administrator.framework.ShootingObject;
+
 /**
  * Created by mac on 2017. 12. 12..
  */

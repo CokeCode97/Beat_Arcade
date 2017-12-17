@@ -1,6 +1,6 @@
-package com.example.administrator.game;
+package com.example.administrator.framework;
 
-import com.example.administrator.framework.GameView;
+import com.example.administrator.state.GameState;
 import com.example.administrator.networks.ClientWork;
 
 /**

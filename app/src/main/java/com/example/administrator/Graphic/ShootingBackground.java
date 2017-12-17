@@ -1,4 +1,4 @@
-package com.example.administrator.game;
+package com.example.administrator.Graphic;
 
 import com.example.administrator.framework.AppManager;
 import com.example.administrator.framework.Graphic;

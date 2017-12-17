@@ -1,7 +1,7 @@
 package com.example.administrator.networks;
 
-import com.example.administrator.game.GameState;
-import com.example.administrator.game.PacketManager;
+import com.example.administrator.state.GameState;
+import com.example.administrator.framework.PacketManager;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -9,7 +9,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.Socket;
-import java.util.StringTokenizer;
 import java.util.Vector;
 
 /**

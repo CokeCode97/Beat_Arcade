@@ -1,4 +1,4 @@
-package com.example.administrator.game;
+package com.example.administrator.state;
 
 import android.content.Context;
 import android.graphics.Canvas;
@@ -6,6 +6,7 @@ import android.view.KeyEvent;
 import android.view.MotionEvent;
 
 import com.example.administrator.framework.IState;
+import com.example.administrator.framework.ObjectManager;
 
 /**
  * Created by mac on 2017. 12. 17..

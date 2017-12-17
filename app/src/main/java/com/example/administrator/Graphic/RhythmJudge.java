@@ -1,7 +1,8 @@
-package com.example.administrator.game;
+package com.example.administrator.Graphic;
 
 import android.graphics.Bitmap;
 
+import com.example.administrator.framework.ObjectManager;
 import com.example.administrator.framework.SpriteAnimation;
 
 /**

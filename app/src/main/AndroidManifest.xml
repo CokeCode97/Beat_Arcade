@@ -19,7 +19,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".GameActivity"
+            android:name="com.example.administrator.activities.GameActivity"
             android:label="title_activity_client"
             android:screenOrientation="landscape"></activity>
 

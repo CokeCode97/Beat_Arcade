@@ -3,7 +3,11 @@ package com.example.administrator.game;
 import android.graphics.Bitmap;
 import android.graphics.Rect;
 
+import com.example.administrator.framework.CollisionManager;
+import com.example.administrator.framework.ObjectManager;
+import com.example.administrator.framework.ShootingObject;
 import com.example.administrator.networks.ClientWork;
+import com.example.administrator.state.GameState;
 
 import java.util.Vector;
 
@@ -36,7 +40,7 @@ public class Player extends ShootingObject {
     boolean slow_Check = false;
 
     //레이저를 담는 벡터
-    Vector<Laser> laser_Vector = new Vector<>();
+    public Vector<Laser> laser_Vector = new Vector<>();
 
     //충돌박스
     Rect rect_collision;

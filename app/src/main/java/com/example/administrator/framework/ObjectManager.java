@@ -1,6 +1,33 @@
-package com.example.administrator.game;
+package com.example.administrator.framework;
 
 import android.graphics.Bitmap;
+
+import com.example.administrator.game.Bullet;
+import com.example.administrator.Graphic.Circle;
+import com.example.administrator.Graphic.DamageNumber;
+import com.example.administrator.Graphic.Defeat;
+import com.example.administrator.state.GameState;
+import com.example.administrator.game.HP_Black;
+import com.example.administrator.game.HP_Red;
+import com.example.administrator.game.HP_Yellow;
+import com.example.administrator.Graphic.LodingBack;
+import com.example.administrator.Graphic.LodingBarBack;
+import com.example.administrator.Graphic.LodingBarFront;
+import com.example.administrator.Graphic.MiniCircle;
+import com.example.administrator.game.Player;
+import com.example.administrator.Graphic.ResultBack;
+import com.example.administrator.Graphic.RhythmBackGourndTop;
+import com.example.administrator.Graphic.RhythmBackGroundBottom1;
+import com.example.administrator.Graphic.RhythmBackGroundBottom2;
+import com.example.administrator.Graphic.RhythmBackGroundBottom3;
+import com.example.administrator.game.RhythmCombo;
+import com.example.administrator.Graphic.RhythmComboNumber;
+import com.example.administrator.Graphic.RhythmJudge;
+import com.example.administrator.game.RhythmNote;
+import com.example.administrator.Graphic.RhythmeEffect;
+import com.example.administrator.Graphic.ShootingBackground;
+import com.example.administrator.Graphic.SlowEffect;
+import com.example.administrator.Graphic.Victory;
 
 import java.util.Random;
 import java.util.Vector;

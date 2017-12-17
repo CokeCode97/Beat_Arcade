@@ -11,7 +11,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ListView;
 
-import com.example.administrator.framework.GameActivity;
 import com.example.administrator.framework.R;
 import com.example.administrator.networks.ChallengeStart;
 import com.example.administrator.networks.HostStart;
