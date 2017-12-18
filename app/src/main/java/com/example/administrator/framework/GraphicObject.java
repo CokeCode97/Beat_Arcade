@@ -23,8 +23,8 @@ public class GraphicObject {
 
     //해당 객체의 포지션을 지정
     public void setPosition(int x, int y) {
-        this.x = (int)(x * GameActivity.size);
-        this.y = (int)(y * GameActivity.size);
+        this.x = (int)(x * GameActivity.SIZE_X);
+        this.y = (int)(y * GameActivity.SIZE_Y);
     }
 
     //해당 객체를 그려줌
@@ -35,11 +35,11 @@ public class GraphicObject {
 
     //1920으로 통일된 가상의 좌표값을 리턴
     public int getX(){
-        return (int)(x/GameActivity.size);
+        return (int)(x/GameActivity.SIZE_X);
     }
 
     public int getY(){
-        return (int)(y/GameActivity.size);
+        return (int)(y/GameActivity.SIZE_Y);
     }
 
     //실제 좌표값을 리턴 터치좌표를 지정할때 유용

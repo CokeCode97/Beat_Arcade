@@ -33,15 +33,15 @@ public class Graphic extends GraphicObject {
 
     @Override
     public void Draw(Canvas canvas) {
-        Rect dest = new Rect(x, y, (int)(x+spriteWidth* GameActivity.size*size), (int)(y+spriteHeight*GameActivity.size*size));
+        Rect dest = new Rect(x, y, (int)(x+spriteWidth* GameActivity.SIZE_X*size), (int)(y+spriteHeight*GameActivity.SIZE_Y*size));
         canvas.drawBitmap(bitmap, rect, dest, null);
     }
 
     public int getSpriteWidth() {
-        return (int)(spriteWidth*GameActivity.size);
+        return (int)(spriteWidth*GameActivity.SIZE_X);
     }
 
     public int getSpriteHeight() {
-        return (int)(spriteHeight*GameActivity.size);
+        return (int)(spriteHeight*GameActivity.SIZE_Y);
     }
 }

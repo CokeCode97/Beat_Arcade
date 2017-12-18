@@ -7,7 +7,7 @@ import android.graphics.Rect;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 
-import com.example.administrator.Graphic.RhythmeEffect;
+import com.example.administrator.game.RhythmeEffect;
 import com.example.administrator.framework.AppManager;
 import com.example.administrator.activities.GameActivity;
 import com.example.administrator.framework.IState;
@@ -17,7 +17,7 @@ import com.example.administrator.framework.SoundManager;
 import com.example.administrator.game.HP_Black;
 import com.example.administrator.game.HP_Red;
 import com.example.administrator.game.HP_Yellow;
-import com.example.administrator.game.NoteMakeThread;
+import com.example.administrator.framework.NoteMakeThread;
 import com.example.administrator.game.Player;
 import com.example.administrator.game.RhythmCombo;
 
@@ -298,7 +298,7 @@ public class GameState implements IState {
         int t1_x = 0, t1_y = 0;                              //리듬게임 부분의 터치를 저장
         int note_i = 0;                                      //노트의 인덱스
         int note_line = 0;                                   //노트의 라인
-        int line = (int) (500 * GameActivity.size);          //리듬게임과 슈팅게임의 경계선
+        int line = (int) (500 * GameActivity.SIZE_X);        //리듬게임과 슈팅게임의 경계선
 
         //터치가능 범위를 지정해줄 렉트
         Rect rt = new Rect();
@@ -368,7 +368,7 @@ public class GameState implements IState {
         //D-Pad에 터치좌표가 있을경우
         if (rt.contains(t2_x, t2_y)) {
             //D-Pad의 버튼을 누른곳으로 움직여줌
-            ObjectManager.dpad_MiniCircle.setPosition((int) ((t2_x - 75) / GameActivity.size), (int) ((t2_y - 75) / GameActivity.size));
+            ObjectManager.dpad_MiniCircle.setPosition((int) ((t2_x - 75) / GameActivity.SIZE_X), (int) ((t2_y - 75) / GameActivity.SIZE_Y));
             //각도계산기를 호출
             calcAngle();
             //상태를 무브로 바꿈
@@ -394,8 +394,8 @@ public class GameState implements IState {
 
     //D-Pad에서 사용자가 누르고 있는 곳과 D-Pad의 중심의 각을 구하는 메소드
     public void calcAngle() {
-        dx = t2_x - (ObjectManager.dpad_Circle.getX_R() + 200 * GameActivity.size);
-        dy = t2_y - (ObjectManager.dpad_Circle.getY_R() + 200 * GameActivity.size);
+        dx = t2_x - (ObjectManager.dpad_Circle.getX_R() + 200 * GameActivity.SIZE_X);
+        dy = t2_y - (ObjectManager.dpad_Circle.getY_R() + 200 * GameActivity.SIZE_Y);
 
         angle = 90 + Math.toDegrees(Math.atan2(dy, dx));
         ObjectManager.player_Vector.get(player_Num).setAngle(angle);

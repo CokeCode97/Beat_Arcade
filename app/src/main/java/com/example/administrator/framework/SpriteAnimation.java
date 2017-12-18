@@ -45,7 +45,7 @@ public class SpriteAnimation extends GraphicObject {
     //사각형 범위만큼을 그려줌
     @Override
     public void Draw(Canvas canvas) {
-        Rect dest = new Rect(x, y, (int)(x+spriteWidth* GameActivity.size), (int)(y+spriteHeight*GameActivity.size));
+        Rect dest = new Rect(x, y, (int)(x+spriteWidth* GameActivity.SIZE_X), (int)(y+spriteHeight*GameActivity.SIZE_Y));
         canvas.drawBitmap(bitmap, rect, dest, null);
     }
 
@@ -64,11 +64,11 @@ public class SpriteAnimation extends GraphicObject {
     }
 
     public int getSpriteWidth() {
-        return (int)(spriteWidth*GameActivity.size);
+        return (int)(spriteWidth*GameActivity.SIZE_X);
     }
 
     public int getSpriteHeight() {
-        return (int)(spriteHeight*GameActivity.size);
+        return (int)(spriteHeight*GameActivity.SIZE_Y);
     }
 
     public void setRect(int left, int width) {

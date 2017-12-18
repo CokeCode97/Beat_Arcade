@@ -2,7 +2,6 @@ package com.example.administrator.game;
 
 import android.graphics.Bitmap;
 
-import com.example.administrator.Graphic.RhythmComboNumber;
 import com.example.administrator.framework.ObjectManager;
 import com.example.administrator.framework.SpriteAnimation;
 import com.example.administrator.networks.ClientWork;

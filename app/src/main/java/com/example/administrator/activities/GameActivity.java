@@ -17,7 +17,7 @@ import com.example.administrator.networks.ServerWork;
 
 public class GameActivity extends Activity {
     GameView gameView;
-    public static double size;
+    public static double SIZE_X, SIZE_Y;
 
     // TODO 네트워크
     public static final int gamePort = 1451;
@@ -73,7 +73,9 @@ public class GameActivity extends Activity {
         //디스플레이의 해상도를 구함
         DisplayMetrics dm = getApplicationContext().getResources().getDisplayMetrics();
         int width = dm.widthPixels;
-        size = (double)width/1920.0;
+        int height = dm.heightPixels;
+        SIZE_X = (double)width/1920.0;
+        SIZE_Y = (double)height/1080.0;
 
         gameView = new GameView(this);
         setContentView(gameView);

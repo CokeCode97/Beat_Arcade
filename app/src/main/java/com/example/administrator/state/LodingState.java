@@ -11,7 +11,7 @@ import com.example.administrator.framework.AppManager;
 import com.example.administrator.framework.IState;
 import com.example.administrator.framework.ObjectManager;
 import com.example.administrator.framework.R;
-import com.example.administrator.game.ParserThread;
+import com.example.administrator.framework.ParserThread;
 
 import java.io.InputStream;
 import java.util.HashMap;
