@@ -85,5 +85,3 @@ public class ClientWork extends Thread {
 
     }
 }
-
-//PlayerData 0 100 120 PlayerData 1 1003 120 Bullet 0 20 400 Bullet 1 30 432
