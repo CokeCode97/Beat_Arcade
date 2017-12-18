@@ -19,7 +19,7 @@ public class HP_Black extends Graphic {
     private boolean HP_ShakeMove = false;
 
     int position_x;
-    int move_x, move_y;
+    private int move_x, move_y;
 
     public HP_Black(int x) {
         super(AppManager.getInstance().getBitmap(R.drawable.hp_black));

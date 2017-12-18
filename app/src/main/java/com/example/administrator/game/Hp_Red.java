@@ -11,7 +11,7 @@ import com.example.administrator.framework.R;
 
 public class HP_Red extends Graphic {
     private int width = 368, height = 44;
-    HP_Black hp_black;
+    public HP_Black hp_black;
     public HP_Red(HP_Black hp_black) {
         super(AppManager.getInstance().getBitmap(R.drawable.hp_red));
         this.hp_black = hp_black;
