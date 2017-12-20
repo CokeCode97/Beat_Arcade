@@ -45,7 +45,7 @@ public class ChallengeStart {
     private String songName = "";
     private String hostName = "";
 
-    public ChallengeStart(String challengerName, String challengerIP, int broadcastPort, int connectionPort, Intent intent, Handler handler, ListView hostList, Context context) {
+    public ChallengeStart(String challengerName, String challengerIP, String opponentIP, int broadcastPort, int connectionPort, Intent intent, Handler handler, ListView hostList, Context context) {
         this.challengerName = challengerName; // 호스트를 검색하여 접속할 도전자의 정보
         this.challengerIP = challengerIP;
         this.broadcastPort = broadcastPort; // 호스트의 방송을 청취할 포트
@@ -65,6 +65,35 @@ public class ChallengeStart {
 
         searchingThread = new SearchingThread(); // 호스트를 검색하는 스레드, TODO 해당 클래스 아래 구현
         searchingThread.start();
+
+
+        //TODO 12/20일추가
+        try {
+            Socket socket = new Socket(opponentIP, connectionPort); // 호스트의 서버소켓에 연결 할 소켓
+
+            // 접속한 소켓으로 데이터를 전송 할 버퍼라이터
+            BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
+            writer.write(challengerName + "\n"); // 도전자의 이름을 전송
+            writer.flush();
+
+            socket.close(); // 전송이 끝나면, 전송을 위해 연 소켓을 닫음
+
+            intent.putExtra("myName", challengerName);
+            intent.putExtra("myIP", challengerIP);
+            intent.putExtra("opponentName", "host");
+            intent.putExtra("opponentIP", opponentIP);
+            intent.putExtra("isHost", "no"); // 이 클라이언트는 이후에 서버를 열지 않고, 접속만 함
+            // TODO : 추가 - 12/17
+            intent.putExtra("songName", "함정카드 - 유희왕");
+
+            searchingThread.flag = false; // 호스트를 검색하고, 리스트뷰에 올리는 작업을 중지
+
+            handler.sendEmptyMessage(100); // TODO 핸들러에게 엑티비티를 시작하기위한 메세지를 보냄 : 100
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        //TODO 여기까지
     }
 
 

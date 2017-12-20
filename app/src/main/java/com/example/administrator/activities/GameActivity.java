@@ -20,7 +20,7 @@ public class GameActivity extends Activity {
     public static double SIZE_X, SIZE_Y;
 
     // TODO 네트워크
-    public static final int gamePort = 1451;
+    public static final int gamePort = 8258;
 
     private String myName;
     private String myIP;

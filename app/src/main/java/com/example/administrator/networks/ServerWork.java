@@ -20,7 +20,6 @@ import java.util.Vector;
  */
 
 public class ServerWork extends Thread {
-    Random random = new Random();
     private boolean flag = true;
 
     private static String myName;
@@ -98,7 +97,6 @@ public class ServerWork extends Thread {
                     all_Write(sendData);
 
                     if (timeCheck_bullet > 300) {
-                        int angle = random.nextInt(360);
                         BulletPatternManager.makeBarrage();
                         timeCheck_bullet = 0;
                     }

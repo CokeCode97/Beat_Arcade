@@ -9,6 +9,7 @@ import android.os.Message;
 import android.os.StrictMode;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ListView;
 
 import com.example.administrator.framework.R;
@@ -23,12 +24,14 @@ import java.util.Enumeration;
 public class IntroActivity extends Activity {
 
     public static final int bPort = 4516;
-    public static final int cPort = 1335;
+    public static final int cPort = 8258;
 
     private Button hostBtn;
     private Button joinBtn;
     private ListView hostList;
     private Button testBtn;
+    //TODO 12/20일 edittext추가
+    EditText editText;
 
     private String myIP;
 
@@ -53,6 +56,8 @@ public class IntroActivity extends Activity {
     @Override
     protected void onStart() {
         super.onStart();
+
+        editText = (EditText)findViewById(R.id.editText2);
 
         intent = new Intent(IntroActivity.this, GameActivity.class);
 
@@ -83,7 +88,8 @@ public class IntroActivity extends Activity {
             @Override
             public void onClick(View view) {
                 hostBtn.setEnabled(false); joinBtn.setEnabled(false);
-                challengeStart = new ChallengeStart("challenger", myIP, bPort, cPort, intent, handler, hostList, IntroActivity.this);
+                //TODO 12/20일 edittext추가
+                challengeStart = new ChallengeStart("challenger", myIP, editText.getText().toString(), bPort, cPort, intent, handler, hostList, IntroActivity.this);
             }
         });
 
